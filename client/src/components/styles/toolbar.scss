@@ -13,6 +13,8 @@
     padding: 0px px-to-rem(20);
     position: absolute;
     top: 0;
+    left: 50%;
+    transform: translateX(-50%);
     margin-top: px-to-rem(20);
 
     .profile-container {
@@ -26,7 +28,7 @@
     }
 
     button {
-        font-size: px-to-rem(14);
+        font-size: px-to-rem(16);
         padding: px-to-rem(12);
         border-radius: px-to-rem(50);
     }
