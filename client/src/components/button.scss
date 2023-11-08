@@ -1,0 +1,12 @@
+@import "../resources/colors";
+@import "../resources/utils";
+
+.text-button {
+    background: linear-gradient(to right, $primary-colour-dark, $secondary-colour);
+    border: none;
+    border-radius: px-to-rem(15);
+    font-size: px-to-rem(24);
+    font-weight: bold;
+    color: white;
+    cursor: pointer;
+}

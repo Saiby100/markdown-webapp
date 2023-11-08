@@ -1,0 +1,10 @@
+@import "../resources/colors";
+@import "../resources/utils";
+
+.text-field {
+    border-radius: px-to-rem(15);
+    font-size: px-to-rem(20);
+    padding: 0px px-to-rem(25);
+    color: $text-colour-dark;
+    border: px-to-rem(2) solid $text-colour-dark;
+}
