@@ -1,5 +1,5 @@
 import React, { useState } from "react"
-import "./signup.scss";
+import "./styles/signup.scss";
 import { TextField } from "../components/textfield";
 import { TextButton } from "../components/button";
 

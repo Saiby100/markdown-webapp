@@ -1,5 +1,5 @@
 import React from "react";
-import "./textfield.scss"
+import "./styles/textfield.scss"
 
 const TextField = ({...props}) => {
     return (
