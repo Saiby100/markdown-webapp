@@ -9,10 +9,15 @@ const SignupPage = () => {
     const [password, setPassword] = useState("");
     const [confPassword, setConfPassword] = useState("");
 
-    const handleSignup = () => {
+    const handleSignup = (form) => {
         if (password == confPassword) {
             alert(`Email: ${email} Username: ${username} Password: ${password}`);
-        }     
+        } else {
+            alert("Passwords don't match")
+            form.preventDefault();
+            setPassword("");
+            setConfPassword("");
+        }
     }
 
     return (
