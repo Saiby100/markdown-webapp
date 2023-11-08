@@ -1,6 +1,7 @@
 import LoginPage from './pages/login';
 import SignupPage from './pages/signup';
 import RecoverPage from './pages/recover';
+import NotesPage from './pages/notes';
 import {BrowserRouter as Router, Route, Routes} from "react-router-dom";
 
 
@@ -11,6 +12,7 @@ function App() {
             <Route path="/signup" element={<SignupPage />} />
             <Route path="/login" element={<LoginPage />}/>  
             <Route path="/recoverpassword" element={<RecoverPage />}/>  
+            <Route path="/notes:username" element={<NotesPage />} />
             <Route path="/" element={<LoginPage />}/> {/* Default path */}
         </Routes>
     </Router>
