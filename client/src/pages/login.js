@@ -2,6 +2,7 @@ import React, { useState } from "react"
 import "./styles/login.scss";
 import { TextField } from "../components/textfield";
 import { TextButton } from "../components/button";
+import {Link} from "react-router-dom";
 
 const LoginPage = () => {
     const [username, setUsername] = useState("");
@@ -31,8 +32,8 @@ const LoginPage = () => {
                         required
                     />
                     <div class="links">
-                        <a href="#">Forgot password</a>
-                        <a href="#">Create account</a>
+                        <Link to="/recoverpassword">Forgot password?</Link>
+                        <Link to="/signup">Create account</Link>
                     </div>
 
                     <TextButton type="submit" text="Log In"/>
