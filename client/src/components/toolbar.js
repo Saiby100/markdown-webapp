@@ -1,6 +1,6 @@
 import React from "react";
 import { TextButton } from "./button";
-import "./styles/toolbar.scss"
+import styles from "./styles/toolbar.module.scss"
 
 const Toolbar = ({username, newNotePress}) => {
 
@@ -8,8 +8,8 @@ const Toolbar = ({username, newNotePress}) => {
         newNotePress();
     }
     return (
-        <div class="container">
-            <div class="profile-container">
+        <div className={styles.container}>
+            <div className={styles.profilecontainer}>
                 <img src="/profile.svg" alt="profile" />
                 <h1>{username}</h1>
             </div>

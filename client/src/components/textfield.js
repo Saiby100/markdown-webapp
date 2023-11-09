@@ -1,9 +1,9 @@
 import React from "react";
-import "./styles/textfield.scss"
+import styles from "./styles/textfield.module.scss"
 
 const TextField = ({...props}) => {
     return (
-        <input class="text-field" {...props} />        
+        <input className={styles.textfield} {...props} />        
     );
 }
 
