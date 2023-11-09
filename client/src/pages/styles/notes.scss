@@ -101,6 +101,8 @@
             border: px-to-rem(2) solid $text-colour-dark;
             border-top-right-radius: px-to-rem(15);
             border-top-left-radius: px-to-rem(15);
+            padding-top: px-to-rem(10);
+            padding-left: px-to-rem(10);
         }
     }
 

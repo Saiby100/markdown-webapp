@@ -1,9 +1,28 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import "./styles/notes.scss"
 import Toolbar from "../components/toolbar";
 import { TextButton, RoundIconButton } from "../components/button";
+import { marked } from "marked";
 
 const NotePopup = ({noteTitle, noteBody}) => {
+
+    const [markdown, setMarkdown] = useState(noteBody);
+    const [preview, setPreview] = useState("");
+
+    const updatePreview = () => {
+        const preview = marked(markdown);
+        setPreview(preview);
+    };
+
+    useEffect(() => {
+        updatePreview();
+    }, [markdown]);
+
+    const handleNoteUpdate = (event) => {
+        const noteBody = event.target.value;
+        setMarkdown(noteBody);
+    };
+
     return (
         <div class="popup-bg">
             <div class="header">
@@ -22,8 +41,16 @@ const NotePopup = ({noteTitle, noteBody}) => {
             </div>
 
             <div class="note-area">
-                <textarea id="markdown"></textarea>
-                <div class="note-preview"></div>
+                <textarea 
+                    id="markdown"
+                    value={markdown}
+                    onChange={handleNoteUpdate}
+                ></textarea>
+                <div 
+                    id="preview"
+                    dangerouslySetInnerHTML={{__html: preview}}>
+
+                </div>
             </div>
 
         </div>
@@ -61,7 +88,7 @@ const NotesPage = () => {
                     body="This is the even longer note body"/>
             </div>
 
-            <NotePopup noteTitle="Note Title" noteBody="This is the note body"/>
+            <NotePopup noteTitle="Note Title" noteBody="# This is the note body"/>
         </div>
     );
 }
