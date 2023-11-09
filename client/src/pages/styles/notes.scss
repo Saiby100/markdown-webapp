@@ -1,32 +1,92 @@
 @import "../../resources/colors";
 @import "../../resources/utils";
 
-.notes-background {
-    background: linear-gradient(to right, $primary-colour-dark, $primary-colour-light);
-    width: 100%;
-    height: 100vh;
+.note-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: px-to-rem(10);
+    position: absolute;
+    top: px-to-rem(130);
+    width: 92%;
+    left: 50%;
+    transform: translateX(-50%);
 
-    .note-list {
+    .note-card {
+        background-color: white;
+        padding: 0px px-to-rem(35);
+        border-radius: px-to-rem(15);
+        cursor: pointer;
+
+        h3 {
+            color: $text-colour-dark;
+            font-weight: 450;
+            font-size: px-to-rem(20);
+        }
+    }
+}
+
+.popup-bg {
+    background-color: white;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 95%;
+    top: 10%;
+    border-radius: px-to-rem(20);
+    padding: 0px px-to-rem(10);
+    height: 90%;
+
+    .header {
         display: flex;
-        flex-wrap: wrap;
-        gap: px-to-rem(10);
-        position: absolute;
-        top: px-to-rem(130);
-        width: 92%;
-        left: 50%;
-        transform: translateX(-50%);
+        justify-content: space-between;
+        padding: px-to-rem(15);
+        padding-left: px-to-rem(50);
+        padding-right: px-to-rem(30);
 
-        .note-card {
-            background-color: white;
-            padding: 0px px-to-rem(35);
-            border-radius: px-to-rem(15);
-            cursor: pointer;
+        input {
+            font-size: px-to-rem(24);
+            border: none;
+            color: $text-colour-dark;
+            width: 50%;
 
-            h3 {
-                color: $text-colour-dark;
-                font-weight: 450;
-                font-size: px-to-rem(20);
+            &:focus {
+                outline: none;
+            }
+        }
+
+        .buttons {
+            display: flex;
+            gap: px-to-rem(15);
+            align-items: center;
+
+            .text-buttons {
+                display: flex;
+                gap: px-to-rem(10);
+                margin-right: px-to-rem(10);
+
+                button {
+                    font-size: px-to-rem(16);
+                    padding: px-to-rem(10) px-to-rem(20);
+                    border-radius: px-to-rem(50);
+                }
             }
         }
     }
+
+    .note-area {
+        position: relative;
+        display: flex;
+
+        textarea {
+            width: 50%;
+            resize: none;
+        }
+
+        div {
+            background-color: red;
+            width: 50%;
+        }
+
+    }
+
 }
