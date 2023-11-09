@@ -13,7 +13,7 @@ const LoginPage = () => {
     }
 
     return (
-        <div class="background">
+        <div class="background center">
             <div class="login-bg">
                 <h1>Welcome</h1>
                 <form onSubmit={handleLogin} class="form-container">

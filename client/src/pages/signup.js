@@ -21,7 +21,7 @@ const SignupPage = () => {
     }
 
     return (
-        <div class="background">
+        <div class="background center">
             <div class="signup-bg">
                 <h1>Register</h1>
                 <form onSubmit={handleSignup} class="form-container">

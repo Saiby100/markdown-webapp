@@ -11,7 +11,7 @@ const RecoverPage = () => {
     }
 
     return (
-        <div class="background">
+        <div class="background center">
             <div class="recover-bg">
                 <h1>Recover Password</h1>
                 <form onSubmit={handleRecoverPassword} class="form-container">
