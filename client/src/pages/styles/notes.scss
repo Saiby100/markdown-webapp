@@ -35,6 +35,8 @@
     border-radius: px-to-rem(20);
     padding: 0px px-to-rem(10);
     height: 90%;
+    display: flex;
+    flex-direction: column;
 
     .header {
         display: flex;
@@ -74,19 +76,32 @@
     }
 
     .note-area {
-        position: relative;
+        flex: 1;
         display: flex;
+        gap: px-to-rem(20);
 
         textarea {
             width: 50%;
             resize: none;
+            border: px-to-rem(2) solid $text-colour-dark;
+            border-top-right-radius: px-to-rem(15);
+            border-top-left-radius: px-to-rem(15);
+            padding-top: px-to-rem(10);
+            padding-left: px-to-rem(10);
+            font-size: px-to-rem(18);
+            color: gray;
+
+            &:focus {
+                outline: none;
+            }
         }
 
         div {
-            background-color: red;
             width: 50%;
+            border: px-to-rem(2) solid $text-colour-dark;
+            border-top-right-radius: px-to-rem(15);
+            border-top-left-radius: px-to-rem(15);
         }
-
     }
 
 }
