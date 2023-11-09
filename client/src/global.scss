@@ -1,0 +1,48 @@
+@import "resources/colors";
+@import "resources/utils";
+
+.background {
+    background: linear-gradient(to right, $primary-colour-dark, $primary-colour-light);
+    width: 100%;
+    height: 100vh;
+    display: flex;
+}
+
+.form-container {
+    display: flex;
+    flex-direction: column;
+    gap: px-to-rem(15);
+    align-items: center;
+    margin-top: 8%;
+
+    input {
+        height: px-to-rem(60);
+        width: 90%;
+    }
+
+    .links {
+        display: flex;
+        justify-content: space-between;
+        width: 100%;
+
+        a {
+            text-decoration: none;
+            color: $text-colour-dark
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+    }
+
+    button {
+        width: 100%;
+        height: px-to-rem(60);
+        margin-top: 10%;
+    }
+}
+
+.center {
+    align-items: center;
+    justify-content: center;
+}
