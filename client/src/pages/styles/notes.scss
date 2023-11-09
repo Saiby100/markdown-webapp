@@ -30,9 +30,9 @@
     position: absolute;
     left: 50%;
     transform: translateX(-50%);
-    width: 95%;
-    top: 10%;
-    border-radius: px-to-rem(20);
+    width: 90%;
+    top: 5%;
+    border-radius: px-to-rem(10);
     padding: 0px px-to-rem(10);
     height: 90%;
     display: flex;
@@ -83,11 +83,7 @@
         textarea {
             width: 50%;
             resize: none;
-            border: px-to-rem(2) solid $text-colour-dark;
-            border-top-right-radius: px-to-rem(15);
-            border-top-left-radius: px-to-rem(15);
-            padding-top: px-to-rem(10);
-            padding-left: px-to-rem(10);
+            border-bottom: none;
             font-size: px-to-rem(18);
             color: gray;
 
@@ -98,12 +94,15 @@
 
         div {
             width: 50%;
-            border: px-to-rem(2) solid $text-colour-dark;
-            border-top-right-radius: px-to-rem(15);
-            border-top-left-radius: px-to-rem(15);
-            padding-top: px-to-rem(10);
-            padding-left: px-to-rem(10);
         }
     }
+}
 
+.note-style {
+    border: px-to-rem(2) solid $text-colour-dark;
+    border-top-right-radius: px-to-rem(15);
+    border-top-left-radius: px-to-rem(15);
+    padding-top: px-to-rem(10);
+    padding-left: px-to-rem(10);
+    border-bottom: none;
 }

@@ -43,13 +43,15 @@ const NotePopup = ({noteTitle, noteBody, onDelete, onShare, onSave, onClose}) =>
             <div class="note-area">
                 <textarea 
                     id="markdown"
+                    class="note-style"
                     value={markdown}
                     onChange={handleNoteUpdate}
                 ></textarea>
                 <div 
                     id="preview"
-                    dangerouslySetInnerHTML={{__html: preview}}>
-
+                    class="note-style"
+                    dangerouslySetInnerHTML={{__html: preview}}
+                >
                 </div>
             </div>
 
