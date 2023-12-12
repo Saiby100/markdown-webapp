@@ -50,14 +50,13 @@ const deleteNote = (noteId) => {
     return true;
 };
 
-const updateNote = (noteId, noteData) => {
-    const note = Note.findByPk(noteId);
+const updateNote = async (noteId, noteTitle, noteText) => {
+    const note = await Note.findByPk(noteId);
 
     if (!note) {
         return false;
     }
-
-    note.update(noteData);
+    await note.update({title: noteTitle, text: noteText});
     return true;
 }
 
