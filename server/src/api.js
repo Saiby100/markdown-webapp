@@ -75,11 +75,16 @@ app.delete('/delete-note/:noteId', async (req, res) => {
 
 });
 
-app.put('/update-note/:noteId', async (req, res) => {
+app.put('/update-note/:noteId', (req, res) => {
     try {
-        const noteData = req.body;
-        console.log(noteData);
-        // const noteFound = db.updateNote(req.params.noteId)
+        const {title, text} = req.body;
+        const noteFound = db.updateNote(req.params.noteId, title, text);
+
+        if (!noteFound) {
+            res.status(404).json({error: 'Note not found'});
+        } 
+
+        res.status(201).json({message: 'Note updated successfully'});
 
     } catch (err) {
         console.log(err);
