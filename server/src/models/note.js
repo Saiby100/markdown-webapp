@@ -1,6 +1,6 @@
 module.exports = (sequelize, DataTypes) => {
     const Note = sequelize.define("Note", {
-        note_id: {
+        noteid: {
             type: DataTypes.INTEGER,
             primaryKey: true,
             autoIncrement: true
@@ -12,15 +12,24 @@ module.exports = (sequelize, DataTypes) => {
         text: {
             type: DataTypes.STRING
         },
-        user_id: {
+        userid: {
             type: DataTypes.INTEGER,
             allowNull: false
         }
 
+    }, {
+        timestamps: false
     });
 
     Note.associate = (models) => {
-        Note.belongsTo(models.User, {foreignKey: 'user_id'});
+        Note.belongsTo(models.User, {
+            foreignKey: 'userid',
+            onDelete: 'CASCADE',
+            references: {
+                model: 'Users',
+                key: 'userid'
+            }
+        });
     }
 
     return Note;
