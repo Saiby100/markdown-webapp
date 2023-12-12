@@ -18,8 +18,8 @@ const addUser = (email, username, password) => {
     return newUser;
 };
 
-const deleteUser = (userId) => {
-    const user = User.findByPk(userId);
+const deleteUser = async (userId) => {
+    const user = await User.findByPk(userId);
 
     if (!user) {
         return false;
@@ -33,10 +33,10 @@ const addNote = (userId, noteTitle, noteText) => {
     const newNote = Note.create({
         title: noteTitle,
         text: noteText,
-        user_id: userId
+        userid: userId
     });
 
-    return newNote.note_id;
+    return newNote.noteid;
 };
 
 const deleteNote = (noteId) => {

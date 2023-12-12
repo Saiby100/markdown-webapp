@@ -17,13 +17,14 @@ app.post('/add-user', async (req, res) => {
         const {name, email, password} = req.body;
         const newUser = await db.addUser(email, name, password);
 
-        res.status(201).json({user_id: newUser.user_id, message: 'Successfully added user'});
+        res.status(201).json({userId: newUser.userid, message: 'Successfully added user'});
     } catch (err)  {
         if (err instanceof Sequelize.UniqueConstraintError) {
             errorMessage = err.errors[0]['message'];
             res.status(409).json({error: errorMessage});
 
         } else {
+            console.log(err)
             res.status(500).json({error: 'Internal Server Error'});
         }
     }
