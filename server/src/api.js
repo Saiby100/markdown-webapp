@@ -1,5 +1,9 @@
 require('dotenv').config();
 
+const crypto = require('crypto');
+
+const functions = require('./utils/functions');
+
 const express = require('express');
 const { Sequelize, DataTypes } = require('sequelize');
 
@@ -14,16 +18,20 @@ const User = require('./models/user')(sequelize, DataTypes);
 const Note = require('./models/note')(sequelize, DataTypes);
 
 app.get('/', async (req, res) => {
-    res.json({message: 'Api is active'});
+    res.status(201).json({message: 'Api is active'});
 });
 
-app.post('/add-user', async (req, res) => {
+app.post('/register', async (req, res) => {
     try {
         const {name, email, password} = req.body;
+        const salt = crypto.randomBytes(16).toString('hex');
+        const hashed_password = await functions.hash(password, salt);
+
         const newUser = await User.create({
             email: email,
             name: name,
-            password: password
+            password: hashed_password,
+            salt: salt
         });
 
         res.status(201).json({userId: newUser.userid, message: 'Successfully added user'});
@@ -36,6 +44,35 @@ app.post('/add-user', async (req, res) => {
             console.log(err)
             res.status(500).json({error: 'Internal Server Error'});
         }
+    }
+});
+
+app.post('/auth/login', async (req, res) => {
+    try {
+        const {name, password} = req.body;
+        const user = await User.findOne({
+            where: {name: name}
+        });
+
+        if (!user) {
+            res.status(404).json({error: 'User not found'});
+        } else {
+            const salt = user.salt;
+            const hashed_password = await functions.hash(password, salt);
+
+            if (hashed_password === user.password) {
+                res.status(201).json({
+                    message: 'User login successful',
+                    token: 'TODO'
+                });
+            } else {
+                res.status(401).json({error: 'Username and password do not match'})
+            }
+        }
+        
+    } catch (err) {
+        console.log(err)
+        res.status(500).json({error: 'Internal Server Error'});
     }
 });
 
