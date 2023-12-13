@@ -17,6 +17,15 @@ const sequelize = new Sequelize(process.env.DATABASE_URL, {
 });
 const User = require('./models/user')(sequelize, DataTypes);
 const Note = require('./models/note')(sequelize, DataTypes);
+const SharedNote = require('./models/sharednote')(sequelize, DataTypes);
+
+//Initialize model associations
+(function() {
+    Object.values(sequelize.models)
+        .filter(model => typeof model.associate === 'function')
+        .forEach(model => model.associate(sequelize.models));
+
+})();
 
 app.get('/', async (req, res) => {
     res.status(201).json({message: 'Api is active'});
@@ -48,7 +57,7 @@ app.post('/register', async (req, res) => {
     }
 });
 
-app.post('/auth/login', async (req, res) => {
+app.post('/login', async (req, res) => {
     try {
         const {name, password} = req.body;
         const user = await User.findOne({
@@ -125,6 +134,30 @@ app.delete('/delete-note/:noteId', functions.authenticateToken, async (req, res)
         res.status(500).json({error: 'Internal Server Error'});
     }
 
+});
+
+//TODO: Secure
+app.get('/get-notes/:userId', async (req, res) => {
+    try {
+        const user = await User.findByPk(req.params.userId, {
+            include: [Note, SharedNote]
+        });
+
+        //TODO: return notes in response
+        if (user) {
+            const notes = user.Notes.map((note) => note.dataValues);
+            const sharedNotes = user.Notes.map((note) => note.dataValues);
+            console.log(notes);
+            console.log(sharedNotes);
+            res.status(201).json({message: 'Notes found'});
+        } else {
+            res.status(404).json({error: 'User not found'});
+        }
+
+    } catch (err) {
+        console.log(err);
+        res.status(500).json({error: 'Internal Server Error'});
+    }
 });
 
 app.put('/update-note/:noteId', functions.authenticateToken, async (req, res) => {
