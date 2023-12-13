@@ -25,6 +25,10 @@ module.exports = (sequelize, DataTypes) => {
         password: {
             type: DataTypes.STRING,
             allowNull: false
+        },
+        salt: {
+            type: DataTypes.STRING(32),
+            allowNull: false
         }
     }, {
         timestamps: false
