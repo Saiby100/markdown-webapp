@@ -5,6 +5,7 @@
     "express-graphql": "^0.12.0",
     "fs": "^0.0.1-security",
     "graphql": "^15.8.0",
+    "jsonwebtoken": "^9.0.2",
     "node-sass": "^9.0.0",
     "path": "^0.12.7",
     "pg": "^8.11.3",
