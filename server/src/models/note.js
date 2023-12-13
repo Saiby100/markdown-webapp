@@ -30,6 +30,8 @@ module.exports = (sequelize, DataTypes) => {
                 key: 'userid'
             }
         });
+
+        Note.hasMany(models.SharedNote, {foreignKey: 'noteid'});
     }
 
     return Note;
