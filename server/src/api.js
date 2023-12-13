@@ -1,6 +1,7 @@
 require('dotenv').config();
 
 const crypto = require('crypto');
+const jwt = require('jsonwebtoken');
 
 const functions = require('./utils/functions');
 
@@ -63,7 +64,7 @@ app.post('/auth/login', async (req, res) => {
             if (hashed_password === user.password) {
                 res.status(201).json({
                     message: 'User login successful',
-                    token: 'TODO'
+                    token: functions.generateAccessToken(name)
                 });
             } else {
                 res.status(401).json({error: 'Username and password do not match'})
@@ -76,7 +77,7 @@ app.post('/auth/login', async (req, res) => {
     }
 });
 
-app.delete('/delete-user/:userId', async (req, res) => {
+app.delete('/delete-user/:userId', functions.authenticateToken, async (req, res) => {
     try {
         const user = await User.findByPk(req.params.userId);
 
@@ -92,8 +93,9 @@ app.delete('/delete-user/:userId', async (req, res) => {
     }
 });
 
-app.post('/add-note/:userId', async (req, res) => {
+app.post('/add-note/:userId', functions.authenticateToken, async (req, res) => {
     try {
+        const {title, text} = req.body;
         const newNote = await Note.create({
             title: title,
             text: text,
@@ -108,7 +110,7 @@ app.post('/add-note/:userId', async (req, res) => {
     }
 });
 
-app.delete('/delete-note/:noteId', async (req, res) => {
+app.delete('/delete-note/:noteId', functions.authenticateToken, async (req, res) => {
     try {
         const note = Note.findByPk(req.params.noteId);
         if (!note) {
@@ -125,7 +127,7 @@ app.delete('/delete-note/:noteId', async (req, res) => {
 
 });
 
-app.put('/update-note/:noteId', async (req, res) => {
+app.put('/update-note/:noteId', functions.authenticateToken, async (req, res) => {
     try {
         const {title, text} = req.body;
         const note = await Note.findByPk(req.params.noteId);
