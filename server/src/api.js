@@ -1,12 +1,17 @@
+require('dotenv').config();
+
 const express = require('express');
-const { Sequelize } = require('sequelize');
+const { Sequelize, DataTypes } = require('sequelize');
 
 const app = express();
 app.use(express.json());
 const port = 3000;
 
-const db = require('./database');
-
+const sequelize = new Sequelize(process.env.DATABASE_URL, {
+  dialect: 'postgres',
+});
+const User = require('./models/user')(sequelize, DataTypes);
+const Note = require('./models/note')(sequelize, DataTypes);
 
 app.get('/', async (req, res) => {
     res.json({message: 'Api is active'});
@@ -15,7 +20,11 @@ app.get('/', async (req, res) => {
 app.post('/add-user', async (req, res) => {
     try {
         const {name, email, password} = req.body;
-        const newUser = await db.addUser(email, name, password);
+        const newUser = await User.create({
+            email: email,
+            name: name,
+            password: password
+        });
 
         res.status(201).json({userId: newUser.userid, message: 'Successfully added user'});
     } catch (err)  {
@@ -32,13 +41,13 @@ app.post('/add-user', async (req, res) => {
 
 app.delete('/delete-user/:userId', async (req, res) => {
     try {
-        const userDeleted = db.deleteUser(req.params.userId);
+        const user = await User.findByPk(req.params.userId);
 
-        if (!userDeleted) {
+        if (!user) {
             res.status(404).json({error: 'User not found'});
+        } else {
+            res.status(201).json({message: 'User deleted Successfully'})
         }
-
-        res.status(201).json({message: 'User deleted Successfully'})
 
     } catch (err) {
         console.log(err);
@@ -48,10 +57,13 @@ app.delete('/delete-user/:userId', async (req, res) => {
 
 app.post('/add-note/:userId', async (req, res) => {
     try {
-        const {title, text} = req.body;
-        await db.addNote(req.params.userId, title, text);
+        const newNote = await Note.create({
+            title: title,
+            text: text,
+            userid: req.params.userId
+        });
 
-        res.status(201).json({message: 'Note added successfully'});
+        res.status(201).json({noteId: newNote.noteId, message: 'Note added successfully'});
 
     } catch (err) {
         console.log(err);
@@ -61,13 +73,14 @@ app.post('/add-note/:userId', async (req, res) => {
 
 app.delete('/delete-note/:noteId', async (req, res) => {
     try {
-        const noteDeleted = db.deleteNote(req.params.noteId);
-        if (!noteDeleted) {
+        const note = Note.findByPk(req.params.noteId);
+        if (!note) {
             res.status(404).json({error: 'Note not found'});
+        } else {
+            await note.destroy();
+            res.status(201).json({message: 'Note deleted successfully'});
         }
 
-        res.status(201).json({message: 'Note deleted successfully'});
-
     } catch (err) {
         console.log(err);
         res.status(500).json({error: 'Internal Server Error'});
@@ -75,16 +88,17 @@ app.delete('/delete-note/:noteId', async (req, res) => {
 
 });
 
-app.put('/update-note/:noteId', (req, res) => {
+app.put('/update-note/:noteId', async (req, res) => {
     try {
         const {title, text} = req.body;
-        const noteFound = db.updateNote(req.params.noteId, title, text);
+        const note = await Note.findByPk(req.params.noteId);
 
-        if (!noteFound) {
+        if (!note) {
             res.status(404).json({error: 'Note not found'});
-        } 
-
-        res.status(201).json({message: 'Note updated successfully'});
+        } else {
+            await note.update({title: title, text: text});
+            res.status(201).json({message: 'Note updated successfully'});
+        }
 
     } catch (err) {
         console.log(err);
@@ -93,7 +107,7 @@ app.put('/update-note/:noteId', (req, res) => {
 
 });
 
-db.sync().then(() => {
+sequelize.sync().then(() => {
   app.listen(port, () => {
     console.log(`Server is running on port ${port}`);
   });
