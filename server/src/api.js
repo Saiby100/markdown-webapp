@@ -1,7 +1,6 @@
 require('dotenv').config();
 
 const crypto = require('crypto');
-const jwt = require('jsonwebtoken');
 
 const functions = require('./utils/functions');
 
@@ -136,20 +135,21 @@ app.delete('/delete-note/:noteId', functions.authenticateToken, async (req, res)
 
 });
 
-//TODO: Secure
-app.get('/get-notes/:userId', async (req, res) => {
+app.get('/get-notes/:userId', functions.authenticateToken, async (req, res) => {
     try {
         const user = await User.findByPk(req.params.userId, {
             include: [Note, SharedNote]
         });
 
-        //TODO: return notes in response
         if (user) {
             const notes = user.Notes.map((note) => note.dataValues);
-            const sharedNotes = user.Notes.map((note) => note.dataValues);
-            console.log(notes);
-            console.log(sharedNotes);
-            res.status(201).json({message: 'Notes found'});
+            const sharedNotes = await Promise.all (user.SharedNotes.map(async (sharedNote) => {
+                const note = await sharedNote.getNote();
+                return note? note.dataValues : null;
+                })
+            );
+
+            res.status(201).json(notes.concat(sharedNotes));
         } else {
             res.status(404).json({error: 'User not found'});
         }
@@ -174,6 +174,24 @@ app.put('/update-note/:noteId', functions.authenticateToken, async (req, res) =>
 
     } catch (err) {
         console.log(err);
+        res.status(500).json({error: 'Internal Server Error'});
+    }
+
+});
+
+app.post('/share-note/:userId/:noteId', functions.authenticateToken, async (req, res) => {
+    try {
+        const userId = req.params.userId;
+        const noteId = req.params.noteId;
+        await SharedNote.create({
+            noteid: noteId,
+            userid: userId
+        });
+
+        res.status(201).json({message: 'Note shared successfully'});
+
+    } catch (err) {
+        console.log(err)
         res.status(500).json({error: 'Internal Server Error'});
     }
 
