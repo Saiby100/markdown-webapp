@@ -197,6 +197,33 @@ app.post('/share-note/:userId/:noteId', functions.authenticateToken, async (req,
 
 });
 
+app.delete('/delete-username/:username', async (req, res) => {
+    try {
+        const {token} = req.body;
+
+        if (token !== process.env.SECRET_TOKEN) {
+            res.sendStatus(403);
+        } 
+        else {
+            const username = req.params.username;
+            const user = await User.findOne({
+                where: {name: username}
+            });
+
+            if (!user) {
+                res.status(404).json({error: 'User not found'});
+            } else {
+                await user.destroy();
+                res.status(201).json({message: 'Deleted user.'})
+            }
+        }
+
+    } catch (err) {
+        console.log(err)
+        res.status(500).json({error: 'Internal Server Error'});
+    }
+});
+
 sequelize.sync().then(() => {
   app.listen(port, () => {
     console.log(`Server is running on port ${port}`);
