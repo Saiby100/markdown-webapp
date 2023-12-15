@@ -110,7 +110,7 @@ app.post('/add-note/:userId', functions.authenticateToken, async (req, res) => {
             userid: req.params.userId
         });
 
-        res.status(201).json({noteId: newNote.noteId, message: 'Note added successfully'});
+        res.status(201).json({noteId: newNote.noteid, message: 'Note added successfully'});
 
     } catch (err) {
         console.log(err);
@@ -118,13 +118,28 @@ app.post('/add-note/:userId', functions.authenticateToken, async (req, res) => {
     }
 });
 
-app.delete('/delete-note/:noteId', functions.authenticateToken, async (req, res) => {
+app.delete('/delete-note/:noteId/:userId', functions.authenticateToken, async (req, res) => {
     try {
-        const note = Note.findByPk(req.params.noteId);
-        if (!note) {
-            res.status(404).json({error: 'Note not found'});
+        const noteId = req.params.noteId;
+        const userId = req.params.userId;
+
+        const sharedNote = SharedNote.findOne({
+            where: {
+                noteid: noteId,
+                userid: userId
+            }
+        });
+
+        if (!sharedNote) {
+            const note = Note.findByPk(noteId);
+            if (!note) {
+                res.status(404).json({error: 'Note not found'});
+            } else {
+                await note.destroy();
+                res.status(201).json({message: 'Note deleted successfully'});
+            }
         } else {
-            await note.destroy();
+            await sharedNote.destroy();
             res.status(201).json({message: 'Note deleted successfully'});
         }
 
