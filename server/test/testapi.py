@@ -91,17 +91,82 @@ class TestApi(unittest.TestCase):
         response = utils.add_note(header, user_id)
         self.assertEqual(response.status_code, 201, 'Failed add_note: adding third note')
 
-    def test_delete_note(self):
-        pass
+    def test_update_note(self):
+        response = utils.add_user()
+        self.assertEqual(response.status_code, 201, 'Failed update_note: create user')
+        user_id = dict(response.json())['userId']
+
+        response = utils.login_user()
+        self.assertEqual(response.status_code, 201, 'Failed update_note: login user')
+        token = dict(response.json())['token']
+
+        header = {
+            'authorization': token
+        }
+        response = utils.add_note(header, user_id)
+        self.assertEqual(response.status_code, 201, 'Failed update_note: adding first note')
+        note_id = dict(response.json())['noteId']
+
+        data = {
+            'title': 'This title was updated',
+            'text': 'This note text was updated.'
+        }
+        response = requests.put(self.URL+f'/update-note/{note_id}', headers=header, json=data)
+        self.assertEqual(response.status_code, 201, 'Failed update_note: update note failed')
+
+        response = requests.put(self.URL+f'/update-note/{-1}', headers=header, json=data)
+        self.assertEqual(response.status_code, 404, 'Failed update_note: note found for unknown id')
 
     def test_get_notes(self):
-        pass
+        response = utils.add_user()
+        self.assertEqual(response.status_code, 201, 'Failed get_notes: create user')
+        user_id = dict(response.json())['userId']
 
-    def test_update_note(self):
-        pass
+        response = utils.login_user()
+        self.assertEqual(response.status_code, 201, 'Failed get_notes: login user')
+        token = dict(response.json())['token']
+
+        header = {
+            'authorization': token
+        }
+        response = utils.add_note(header, user_id)
+        self.assertEqual(response.status_code, 201, 'Failed get_notes: adding first note')
+
+        response = utils.add_note(header, user_id)
+        self.assertEqual(response.status_code, 201, 'Failed get_notes: adding second note')
+
+        response = utils.add_note(header, user_id)
+        self.assertEqual(response.status_code, 201, 'Failed get_notes: adding third note')
+
+        response = requests.get(self.URL+f'/get-notes/{user_id}', headers=header)
+        self.assertEqual(response.status_code, 201, 'Failed get_notes: fetching notes')
+        self.assertEqual(len(list(response.json())), 3, 'Failed get_notes: notes amount not matching')
+
 
     def test_share_note(self):
         pass
+
+    def test_delete_note(self):
+        response = utils.add_user()
+        self.assertEqual(response.status_code, 201, 'Failed delete_note: create user')
+        user_id = dict(response.json())['userId']
+
+        response = utils.login_user()
+        self.assertEqual(response.status_code, 201, 'Failed delete_note: login user')
+        token = dict(response.json())['token']
+
+        header = {
+            'authorization': token
+        }
+        response = utils.add_note(header, user_id)
+        self.assertEqual(response.status_code, 201, 'Failed delete_note: adding first note')
+        note_id = dict(response.json())['noteId']
+
+        response = requests.delete(self.URL+f'/delete-note/{note_id}/{user_id}', headers=header)
+        self.assertEqual(response.status_code, 201, 'Failed delete_note: deleting note')
+
+        response = requests.delete(self.URL+f'/delete-note/{note_id}/{user_id}', headers=header)
+        self.assertEqual(response.status_code, 404, 'Failed delete_note: note found after deletion')
 
 if __name__ == '__main__':
     unittest.main()
