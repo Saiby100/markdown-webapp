@@ -13,9 +13,8 @@ class TestApi(unittest.TestCase):
             'token': utils.token
         }
 
-        response = requests.delete(URL+'/delete-username/Salahuddin', json=data)
-
-        response = requests.delete(URL+'/delete-username/Sala', json=data)
+        requests.delete(URL+'/delete-username/Salahuddin', json=data)
+        requests.delete(URL+'/delete-username/Sala', json=data)
     
     def test_active(self):
         # Delete users after each testcase
