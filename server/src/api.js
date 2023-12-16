@@ -123,7 +123,7 @@ app.delete('/delete-note/:noteId/:userId', functions.authenticateToken, async (r
         const noteId = req.params.noteId;
         const userId = req.params.userId;
 
-        const sharedNote = SharedNote.findOne({
+        const sharedNote = await SharedNote.findOne({
             where: {
                 noteid: noteId,
                 userid: userId
@@ -131,7 +131,7 @@ app.delete('/delete-note/:noteId/:userId', functions.authenticateToken, async (r
         });
 
         if (!sharedNote) {
-            const note = Note.findByPk(noteId);
+            const note = await Note.findByPk(noteId);
             if (!note) {
                 res.status(404).json({error: 'Note not found'});
             } else {
@@ -147,7 +147,6 @@ app.delete('/delete-note/:noteId/:userId', functions.authenticateToken, async (r
         console.log(err);
         res.status(500).json({error: 'Internal Server Error'});
     }
-
 });
 
 app.get('/get-notes/:userId', functions.authenticateToken, async (req, res) => {
