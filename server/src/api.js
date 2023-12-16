@@ -193,16 +193,19 @@ app.put('/update-note/:noteId', functions.authenticateToken, async (req, res) =>
 
 });
 
-app.post('/share-note/:userId/:noteId', functions.authenticateToken, async (req, res) => {
+app.post('/share-note', functions.authenticateToken, async (req, res) => {
     try {
-        const userId = req.params.userId;
-        const noteId = req.params.noteId;
-        await SharedNote.create({
-            noteid: noteId,
-            userid: userId
-        });
+        const {user1, user2, noteId} = req.body
+        if (user1 === user2) {
+            res.status(201).json({message: 'Note shared successfully'});
+        } else {
+            await SharedNote.create({
+                noteid: noteId,
+                userid: user2
+            });
 
-        res.status(201).json({message: 'Note shared successfully'});
+            res.status(201).json({message: 'Note shared successfully'});
+        }
 
     } catch (err) {
         console.log(err)
