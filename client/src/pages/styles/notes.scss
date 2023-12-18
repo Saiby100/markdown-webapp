@@ -6,21 +6,24 @@
     flex-wrap: wrap;
     gap: px-to-rem(10);
     position: absolute;
-    top: px-to-rem(130);
+    top: px-to-rem(115);
     width: 92%;
     left: 50%;
     transform: translateX(-50%);
 
     .note-card {
         background-color: white;
-        padding: 0px px-to-rem(35);
+        padding: 0px px-to-rem(30);
         border-radius: px-to-rem(15);
         cursor: pointer;
+        height: px-to-rem(50);
+        display: flex;
+        align-items: center;
 
         h3 {
             color: $text-colour-dark;
-            font-weight: 450;
-            font-size: px-to-rem(20);
+            font-weight: 500;
+            font-size: px-to-rem(18);
         }
     }
 }
