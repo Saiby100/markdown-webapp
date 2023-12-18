@@ -16,14 +16,14 @@
     margin-top: 8%;
 
     input {
-        height: px-to-rem(60);
+        height: px-to-rem(43);
         width: 90%;
     }
 
     .links {
         display: flex;
         justify-content: space-between;
-        width: 100%;
+        width: 95%;
 
         a {
             text-decoration: none;
@@ -37,8 +37,8 @@
 
     button {
         width: 100%;
-        height: px-to-rem(60);
-        margin-top: 10%;
+        height: px-to-rem(43);
+        margin-top: 5%;
     }
 }
 
