@@ -3,13 +3,17 @@ import "./styles/login.scss";
 import { TextField } from "../components/textfield";
 import { TextButton } from "../components/button";
 import {Link} from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 const LoginPage = () => {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
 
+    const navigate = useNavigate();
+
     const handleLogin = () => {
-        alert(`Username: ${username} Password: ${password}`)
+        alert(`Username: ${username} Password: ${password}`);
+        navigate(`/notes/${username}`);
     }
 
     return (

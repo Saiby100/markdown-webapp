@@ -2,6 +2,7 @@ import React, { useState } from "react"
 import "./styles/signup.scss";
 import { TextField } from "../components/textfield";
 import { TextButton } from "../components/button";
+import { useNavigate } from "react-router-dom";
 
 const SignupPage = () => {
     const [email, setEmail] = useState("");
@@ -9,9 +10,13 @@ const SignupPage = () => {
     const [password, setPassword] = useState("");
     const [confPassword, setConfPassword] = useState("");
 
+    const navigate = useNavigate();
+
     const handleSignup = (form) => {
         if (password == confPassword) {
             alert(`Email: ${email} Username: ${username} Password: ${password}`);
+            navigate('/');
+
         } else {
             alert("Passwords don't match")
             form.preventDefault();
