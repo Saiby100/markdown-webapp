@@ -9,7 +9,7 @@
     color: $text-colour-light;
     width: 90%;
     align-items: center;
-    border-radius: px-to-rem(10);
+    border-radius: px-to-rem(15);
     padding: 0px px-to-rem(20);
     position: absolute;
     top: 0;
@@ -23,13 +23,13 @@
 
         h1 {
             font-size: px-to-rem(24);
-            font-weight: 450;
+            font-weight: 500;
         }
     }
 
     button {
         font-size: px-to-rem(16);
         padding: px-to-rem(12);
-        border-radius: px-to-rem(50);
+        border-radius: px-to-rem(15);
     }
 }
