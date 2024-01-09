@@ -203,16 +203,21 @@ app.put('/update-note/:noteId', functions.authenticateToken, async (req, res) =>
 
 app.post('/share-note', functions.authenticateToken, async (req, res) => {
     try {
-        const {user1, user2, noteId} = req.body
-        //TODO: Get userId for user2 before sharing (user1 won't know user2's ID)
-        if (user1 === user2) {
-            res.status(201).json({message: 'Note shared successfully'});
-        } else {
-            await SharedNote.create({
-                noteid: noteId,
-                userid: user2
-            });
+        const {fromUserId, toUsername, noteId} = req.body
+        const toUser = await User.findOne({
+            where: {name: toUsername}
+        });
 
+        if (!toUser) {
+            res.status(404).json({error: 'User not found'})
+
+        } else {
+            if (fromUserId !== toUser.userid) {
+                await SharedNote.create({
+                    noteid: noteId,
+                    userid: toUser.userid
+                });
+            } 
             res.status(201).json({message: 'Note shared successfully'});
         }
 

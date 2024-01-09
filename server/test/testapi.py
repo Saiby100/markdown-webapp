@@ -181,13 +181,22 @@ class TestApi(unittest.TestCase):
 
         # Share first user's note to second user
         data = {
-            'user1': user_ids[0],
-            'user2': user_ids[1],
+            'fromUserId': user_ids[0],
+            'toUsername': 'Sala',
             'noteId': note_id
         }
 
         response = requests.post(self.URL+'/share-note', headers=headers[0], json=data)
         self.assertEqual(response.status_code, 201, 'Failed share_note: share note')
+        
+        # Share first user's note to second user
+        data = {
+            'fromUserId': user_ids[0],
+            'toUsername': 'userdoesn\'texist',
+            'noteId': note_id
+        }
+        response = requests.post(self.URL+'/share-note', headers=headers[0], json=data)
+        self.assertEqual(response.status_code, 404, 'Failed share_note: share note fail test')
 
         # Check amount of second user's note
         response = requests.get(self.URL+f'/get-notes/{user_ids[1]}', headers=headers[1])
