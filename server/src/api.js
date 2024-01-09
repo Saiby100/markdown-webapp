@@ -7,7 +7,14 @@ const functions = require('./utils/functions');
 const express = require('express');
 const { Sequelize, DataTypes } = require('sequelize');
 
+const cors = require("cors");
+
 const app = express();
+app.use(cors({
+    origin: '*',
+    methods: 'GET, PUT, POST, DELETE',
+    allowedHeaders: 'Content-Type,Authorization'
+}));
 app.use(express.json());
 const port = 8000;
 
@@ -197,6 +204,7 @@ app.put('/update-note/:noteId', functions.authenticateToken, async (req, res) =>
 app.post('/share-note', functions.authenticateToken, async (req, res) => {
     try {
         const {user1, user2, noteId} = req.body
+        //TODO: Get userId for user2 before sharing (user1 won't know user2's ID)
         if (user1 === user2) {
             res.status(201).json({message: 'Note shared successfully'});
         } else {
