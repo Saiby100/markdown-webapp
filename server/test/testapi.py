@@ -5,10 +5,10 @@ import utils
 
 class TestApi(unittest.TestCase):
     def setUp(self):
-        self.URL = 'http://localhost:3000'
+        self.URL = 'http://localhost:8000'
     
     def tearDown(self):
-        URL = "http://localhost:3000"
+        URL = "http://localhost:8000"
         data = {
             'token': utils.token
         }

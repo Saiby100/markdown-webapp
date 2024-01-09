@@ -1,7 +1,7 @@
 import json
 import requests
 
-URL = "http://localhost:3000"
+URL = "http://localhost:8000"
 
 with open('./private.json', 'r') as file:
     token = json.load(file)['token']
