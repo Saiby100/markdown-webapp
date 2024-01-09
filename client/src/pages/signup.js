@@ -3,6 +3,7 @@ import "./styles/signup.scss";
 import { TextField } from "../components/textfield";
 import { TextButton } from "../components/button";
 import { useNavigate } from "react-router-dom";
+import { signupUser } from "../utils/DatabaseApi";
 
 const SignupPage = () => {
     const [email, setEmail] = useState("");
@@ -12,14 +13,21 @@ const SignupPage = () => {
 
     const navigate = useNavigate();
 
-    const handleSignup = (form) => {
-        if (password == confPassword) {
-            alert(`Email: ${email} Username: ${username} Password: ${password}`);
-            navigate('/');
+    const handleSignup = async (form) => {
+        form.preventDefault();
+        if (password === confPassword) {
+            const signupResponse = await signupUser(email, username, password);
+
+            if (signupResponse.status === 201) {
+                alert("Signup Successful");
+                navigate('/');
+
+            } else {
+                alert(`Error: ${signupResponse.json.error}`)
+            }
 
         } else {
             alert("Passwords don't match")
-            form.preventDefault();
             setPassword("");
             setConfPassword("");
         }

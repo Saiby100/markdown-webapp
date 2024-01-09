@@ -16,12 +16,13 @@ const LoginPage = () => {
         event.preventDefault()
         const loginResponse = await loginUser(username, password);
 
-        if (loginResponse.status >= 200) {
+        if (loginResponse.status === 201) {
             //TODO: Store token and userid to reference from note page
             alert(`Username: ${username} Password: ${password}`);
             navigate(`/notes/${username}`);
         } else {
-            alert(`Error: ${loginResponse.error}`)
+            console.log(loginResponse);
+            alert(`Error: ${loginResponse.json.error}`)
         }
     }
 
