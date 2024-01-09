@@ -9,7 +9,7 @@ const { Sequelize, DataTypes } = require('sequelize');
 
 const app = express();
 app.use(express.json());
-const port = 3000;
+const port = 8000;
 
 const sequelize = new Sequelize(process.env.DATABASE_URL, {
   dialect: 'postgres',
@@ -72,7 +72,8 @@ app.post('/login', async (req, res) => {
             if (hashed_password === user.password) {
                 res.status(201).json({
                     message: 'User login successful',
-                    token: functions.generateAccessToken(name)
+                    token: functions.generateAccessToken(name),
+                    userId: user.userid
                 });
             } else {
                 res.status(401).json({error: 'Username and password do not match'})
