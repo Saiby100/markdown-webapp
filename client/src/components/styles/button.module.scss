@@ -1,0 +1,31 @@
+@import "../../resources/colors";
+@import "../../resources/utils";
+
+.textbtn {
+    border: none;
+    border-radius: px-to-rem(15);
+    font-size: px-to-rem(24);
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.gradient {
+    background: linear-gradient(to right, $primary-colour-dark, $secondary-colour);
+    color: white;
+}
+
+.plain {
+    background-color: #DFDFDF;
+    color: $text-colour-dark;
+}
+
+.round {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%; 
+    width: px-to-rem(40);
+    height: px-to-rem(40);
+    border: none;
+    cursor: pointer;
+}

@@ -1,0 +1,14 @@
+@import "../../resources/colors";
+@import "../../resources/utils";
+
+h1 {
+    font-size: px-to-rem(22);
+}
+.recover-bg {
+    background-color: white;
+    padding: px-to-rem(30) px-to-rem(40);
+    color: $text-colour-dark;
+    border-radius: px-to-rem(20);
+    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.3);
+    width: px-to-rem(390);
+}

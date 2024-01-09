@@ -1,0 +1,111 @@
+@import "../../resources/colors";
+@import "../../resources/utils";
+
+.note-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: px-to-rem(10);
+    position: absolute;
+    top: px-to-rem(115);
+    width: 92%;
+    left: 50%;
+    transform: translateX(-50%);
+
+    .note-card {
+        background-color: white;
+        padding: 0px px-to-rem(30);
+        border-radius: px-to-rem(15);
+        cursor: pointer;
+        height: px-to-rem(50);
+        display: flex;
+        align-items: center;
+
+        h3 {
+            color: $text-colour-dark;
+            font-weight: 500;
+            font-size: px-to-rem(18);
+        }
+    }
+}
+
+.popup-bg {
+    background-color: white;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 90%;
+    top: 5%;
+    border-radius: px-to-rem(10);
+    padding: 0px px-to-rem(10);
+    height: 90%;
+    display: flex;
+    flex-direction: column;
+
+    .header {
+        display: flex;
+        justify-content: space-between;
+        padding: px-to-rem(15);
+        padding-left: px-to-rem(50);
+        padding-right: px-to-rem(30);
+
+        input {
+            font-size: px-to-rem(24);
+            border: none;
+            color: $text-colour-dark;
+            width: 50%;
+
+            &:focus {
+                outline: none;
+            }
+        }
+
+        .buttons {
+            display: flex;
+            gap: px-to-rem(15);
+            align-items: center;
+
+            .text-buttons {
+                display: flex;
+                gap: px-to-rem(10);
+                margin-right: px-to-rem(10);
+
+                button {
+                    font-size: px-to-rem(16);
+                    padding: px-to-rem(10) px-to-rem(20);
+                    border-radius: px-to-rem(50);
+                }
+            }
+        }
+    }
+
+    .note-area {
+        flex: 1;
+        display: flex;
+        gap: px-to-rem(20);
+
+        textarea {
+            width: 50%;
+            resize: none;
+            border-bottom: none;
+            font-size: px-to-rem(18);
+            color: gray;
+
+            &:focus {
+                outline: none;
+            }
+        }
+
+        div {
+            width: 50%;
+        }
+    }
+}
+
+.note-style {
+    border: px-to-rem(2) solid $text-colour-dark;
+    border-top-right-radius: px-to-rem(15);
+    border-top-left-radius: px-to-rem(15);
+    padding-top: px-to-rem(10);
+    padding-left: px-to-rem(10);
+    border-bottom: none;
+}

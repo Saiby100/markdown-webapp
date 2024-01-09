@@ -1,0 +1,35 @@
+@import "../../resources/colors";
+@import "../../resources/utils";
+
+.container {
+    display: flex;
+    justify-content: space-between;
+    background: white;
+    height: px-to-rem(60);
+    color: $text-colour-light;
+    width: 90%;
+    align-items: center;
+    border-radius: px-to-rem(15);
+    padding: 0px px-to-rem(20);
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    margin-top: px-to-rem(20);
+
+    .profilecontainer {
+        display: flex;
+        gap: px-to-rem(20);
+
+        h1 {
+            font-size: px-to-rem(24);
+            font-weight: 500;
+        }
+    }
+
+    button {
+        font-size: px-to-rem(16);
+        padding: px-to-rem(12);
+        border-radius: px-to-rem(15);
+    }
+}
