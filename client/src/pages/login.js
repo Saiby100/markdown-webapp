@@ -4,6 +4,7 @@ import { TextField } from "../components/textfield";
 import { TextButton } from "../components/button";
 import {Link} from "react-router-dom";
 import { useNavigate } from "react-router-dom";
+import { loginUser } from "../utils/DatabaseApi"
 
 const LoginPage = () => {
     const [username, setUsername] = useState("");
@@ -11,16 +12,24 @@ const LoginPage = () => {
 
     const navigate = useNavigate();
 
-    const handleLogin = () => {
-        alert(`Username: ${username} Password: ${password}`);
-        navigate(`/notes/${username}`);
+    const handleLogin = async (event) => {
+        event.preventDefault()
+        const loginResponse = await loginUser(username, password);
+
+        if (loginResponse.status >= 200) {
+            //TODO: Store token and userid to reference from note page
+            alert(`Username: ${username} Password: ${password}`);
+            navigate(`/notes/${username}`);
+        } else {
+            alert(`Error: ${loginResponse.error}`)
+        }
     }
 
     return (
         <div class="background center">
             <div class="login-bg">
                 <h1>Welcome</h1>
-                <form onSubmit={handleLogin} class="form-container">
+                <form onSubmit={(e) => handleLogin(e)} class="form-container">
                     <TextField 
                         type="text" 
                         placeholder="Username"
