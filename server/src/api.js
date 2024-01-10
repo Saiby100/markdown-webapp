@@ -77,11 +77,9 @@ app.post('/login', async (req, res) => {
             const hashed_password = await functions.hash(password, salt);
 
             if (hashed_password === user.password) {
-                res.cookie('authToken', functions.generateAccessToken(name), {
-                    httpOnly: true
-                });
                 res.status(201).json({
                     message: 'User login successful',
+                    token: functions.generateAccessToken(name),
                     userId: user.userid
                 });
             } else {

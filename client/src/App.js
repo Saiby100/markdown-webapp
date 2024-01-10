@@ -12,7 +12,7 @@ function App() {
         <Routes>
             <Route path="/signup" element={<SignupPage />} />
             <Route path="/recoverpassword" element={<RecoverPage />}/>  
-            <Route path="/notes/:username" element={<NotesPage />} />
+            <Route path="/notes/:userId" element={<NotesPage />} />
             <Route path="/" element={<LoginPage />}/> {/* Default path */}
         </Routes>
     </Router>
