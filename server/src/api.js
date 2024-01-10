@@ -100,6 +100,7 @@ app.delete('/delete-user/:userId', functions.authenticateToken, async (req, res)
         if (!user) {
             res.status(404).json({error: 'User not found'});
         } else {
+            await user.destroy();
             res.status(201).json({message: 'User deleted Successfully'})
         }
 
