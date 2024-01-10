@@ -17,9 +17,12 @@ const LoginPage = () => {
         const loginResponse = await loginUser(username, password);
 
         if (loginResponse.status === 201) {
-            //TODO: Store token and userid to reference from note page
-            alert(`Username: ${username} Password: ${password}`);
-            navigate(`/notes/${username}`);
+            if (!loginResponse.json.userId) {
+                alert("No ID received from server");
+            } else {
+                localStorage.setItem("authToken", loginResponse.json.token);
+                navigate(`/notes/${loginResponse.json.userId}`);
+            }
         } else {
             console.log(loginResponse);
             alert(`Error: ${loginResponse.json.error}`)
