@@ -3,6 +3,8 @@ import "./styles/notes.scss"
 import Toolbar from "../components/toolbar";
 import { TextButton, RoundIconButton } from "../components/button";
 import { marked } from "marked";
+import { useParams } from "react-router-dom";
+import { getNotes } from "../utils/DatabaseApi";
 
 const NotePopup = ({noteTitle, noteBody, onDelete, onShare, onSave, onClose}) => {
 
@@ -68,15 +70,22 @@ const Note = ({title, ...props}) => {
 }
 
 const NotesPage = () => {
-
+    const { userId } = useParams();
     const [noteTitle, setNoteTitle] = useState("");
     const [noteBody, setNoteBody] = useState("");
     const [popupVisible, setPopupVisible] = useState(false);
+    const [notes, setNotes] = useState([]);
+    const token = localStorage.getItem("authToken");
+
+    useEffect(() => {
+        updateNotes();
+    }, []);
+    
 
     const openNote = (note = null) => {
         if (note !== null) {
             setNoteTitle(note.title);
-            setNoteBody(note.body);
+            setNoteBody(note.text);
         } else {
             setNoteTitle("Note Title");
             setNoteBody("");
@@ -103,12 +112,20 @@ const NotesPage = () => {
         alert("Share note")
     }
 
-    const notes = [
-        {id: 1, title: "Title 1", body: "# Body 1"},
-        {id: 2, title: "Title 2", body: "# Body 2"},
-        {id: 3, title: "Title 3", body: "# Body 3"},
-        {id: 4, title: "Title 4", body: "# Body 4"}
-    ]
+    const updateNotes = async () => {
+        if (!token) {
+            console.log("Failed to retrieve token");
+            return;
+        }
+
+        const getNotesResponse = await getNotes(userId, token);
+        if (getNotesResponse.status === 201) {
+            // console.log(getNotesResponse.json);
+            setNotes(getNotesResponse.json);
+        } else {
+            console.log(getNotesResponse.json.error)
+        }
+    }
 
     return (
         <div class="background">
@@ -116,8 +133,9 @@ const NotesPage = () => {
 
             <div class="note-list">
                 {
-                notes.map((note) => 
-                (<Note title={note.title} onClick={e => openNote(note)}/>))
+                notes.map((note, index) => (
+                    <Note key={index} title={note.title} onClick={() => openNote(note)} />
+                ))
                 }
             </div>
             {
