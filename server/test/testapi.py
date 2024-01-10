@@ -54,7 +54,7 @@ class TestApi(unittest.TestCase):
 
         response = utils.login_user()
         self.assertEqual(response.status_code, 201, 'Failed test_jwt: login user')
-        token = dict(response.json())['token']
+        token = response.cookies.get('authToken')
 
         header = {
             'authorization': token
@@ -78,7 +78,7 @@ class TestApi(unittest.TestCase):
 
         response = utils.login_user()
         self.assertEqual(response.status_code, 201, 'Failed add_note: login user')
-        token = dict(response.json())['token']
+        token = response.cookies.get('authToken')
 
         header = {
             'authorization': token
@@ -100,7 +100,7 @@ class TestApi(unittest.TestCase):
 
         response = utils.login_user()
         self.assertEqual(response.status_code, 201, 'Failed update_note: login user')
-        token = dict(response.json())['token']
+        token = response.cookies.get('authToken')
 
         header = {
             'authorization': token
@@ -127,7 +127,7 @@ class TestApi(unittest.TestCase):
 
         response = utils.login_user()
         self.assertEqual(response.status_code, 201, 'Failed get_notes: login user')
-        token = dict(response.json())['token']
+        token = response.cookies.get('authToken')
 
         header = {
             'authorization': token
@@ -163,11 +163,11 @@ class TestApi(unittest.TestCase):
         # Login Users
         response = utils.login_user()
         self.assertEqual(response.status_code, 201, 'Failed share_note: login user')
-        tokens.append(dict(response.json())['token'])
+        tokens.append(response.cookies.get('authToken'))
 
         response = utils.login_user('Sala')
         self.assertEqual(response.status_code, 201, 'Failed share_note: login second user')
-        tokens.append(dict(response.json())['token'])
+        tokens.append(response.cookies.get('authToken'))
 
         # Create notes
         headers = [
@@ -220,7 +220,7 @@ class TestApi(unittest.TestCase):
 
         response = utils.login_user()
         self.assertEqual(response.status_code, 201, 'Failed delete_note: login user')
-        token = dict(response.json())['token']
+        token = response.cookies.get('authToken')
 
         header = {
             'authorization': token
