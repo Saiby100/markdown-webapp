@@ -4,7 +4,8 @@ import Toolbar from "../components/toolbar";
 import { TextButton, RoundIconButton } from "../components/button";
 import { marked } from "marked";
 import { useParams } from "react-router-dom";
-import { getNotes } from "../utils/DatabaseApi";
+import { addNote, getNotes, updateNote } from "../utils/DatabaseApi";
+//TODO: Fix note body not updating
 
 const NotePopup = ({noteTitle, noteBody, onDelete, onShare, onSave, onClose}) => {
 
@@ -75,20 +76,25 @@ const NotesPage = () => {
     const [noteBody, setNoteBody] = useState("");
     const [popupVisible, setPopupVisible] = useState(false);
     const [notes, setNotes] = useState([]);
+    const [noteIsNew, setNoteIsNew] = useState(false);
     const token = localStorage.getItem("authToken");
+    const [noteId, setNoteId] = useState(-1);
 
     useEffect(() => {
         updateNotes();
-    }, []);
+    }, [popupVisible]);
     
 
     const openNote = (note = null) => {
         if (note !== null) {
             setNoteTitle(note.title);
             setNoteBody(note.text);
+            setNoteId(note.noteid);
+            setNoteIsNew(false);
         } else {
             setNoteTitle("Note Title");
             setNoteBody("");
+            setNoteIsNew(true);
         }
 
         setPopupVisible(true);
@@ -103,9 +109,25 @@ const NotesPage = () => {
         //TODO: handle delete
     }
 
-    const saveNote = () => {
+    const saveNote = async () => {
         setPopupVisible(false);
-        //TODO: handle save
+        if (noteIsNew) {
+            const addNoteRequest = await addNote(userId, noteTitle, noteBody, token);
+            if (addNoteRequest.status === 201) {
+                //TODO: show popup
+                alert(`Message: ${addNoteRequest.json.message}`)
+            } else {
+                alert(`Message: ${addNoteRequest.json.error}`)
+            }
+        } else {
+            const updateNoteRequest = await updateNote(noteId, noteTitle, noteBody, token);
+            if (updateNoteRequest.status === 201) {
+                //TODO: show popup
+                alert(`Message: ${updateNoteRequest.json.message}`)
+            } else {
+                alert(`Message: ${updateNoteRequest.json.error}`)
+            }
+        }
     }
 
     const shareNote = () => {
@@ -120,7 +142,6 @@ const NotesPage = () => {
 
         const getNotesResponse = await getNotes(userId, token);
         if (getNotesResponse.status === 201) {
-            // console.log(getNotesResponse.json);
             setNotes(getNotesResponse.json);
         } else {
             console.log(getNotesResponse.json.error)
