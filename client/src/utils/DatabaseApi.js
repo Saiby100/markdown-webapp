@@ -22,8 +22,8 @@ const loginUser = async (username, password) => {
             status: response.status
         };
 
-    } catch (error) {
-        console.log(error);
+    } catch (err) {
+        console.log(err);
         return {json: {error: "Failed to make request"}, status: 500};
     }
 }
@@ -51,31 +51,171 @@ const signupUser = async (email, username, password) => {
             status: response.status
         };
 
-    } catch (error) {
-        console.log(error);
+    } catch (err) {
+        console.log(err);
         return {json: {error: "Failed to make request"}, status: 500};
     }
 }
 
-const getNotes = (userId, token) => {
+const getNotes = async (userId, token) => {
+    try {
+        const endpoint = `${URL}/get-notes/${userId}`;
+
+        const response = await fetch(endpoint, {
+            method: "GET",
+            headers: {
+                "Authorization": token
+            }
+        });
+
+        // console.log(response.json());
+        return {
+            json: await response.json(), 
+            status: response.status
+        };
+
+    } catch (err) {
+        console.log(err);
+        return {json: {error: "Failed to make request"}, status: 500};
+    }
 
 }
 
-const addNote = (userId, title, text, token) => {
+const addNote = async (userId, title, text, token) => {
+    try {
+        const endpoint = `${URL}/add-note/${userId}`;
+
+        const noteData = {
+            title: title,
+            text: text
+        };
+
+        const response = await fetch(endpoint, {
+            method: "POST",
+            headers: {
+                "Authorization": token,
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(noteData)
+        });
+
+        return {
+            json: await response.json(), 
+            status: response.status
+        };
+
+    } catch (err) {
+        console.log(err);
+        return {json: {error: "Failed to make request"}, status: 500};
+    }
 
 }
 
-const updateNote = (noteId, title, text, token) => {
+const updateNote = async (noteId, title, text, token) => {
+
+    try {
+        const endpoint = `${URL}/update-note/${noteId}`;
+
+        const noteData = {
+            title: title,
+            text: text
+        };
+
+        const response = await fetch(endpoint, {
+            method: "PUT",
+            headers: {
+                "Authorization": token,
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(noteData)
+        });
+
+        return {
+            json: await response.json(), 
+            status: response.status
+        };
+
+    } catch (err) {
+        console.log(err);
+        return {json: {error: "Failed to make request"}, status: 500};
+    }
 
 }
 
-const deleteNote = (noteId, userId, token) => {
+const deleteNote = async (noteId, userId, token) => {
+    try {
+        const endpoint = `${URL}/delete-note/${noteId}/${userId}`;
+        
+        const response = await fetch(endpoint, {
+            method: "DELETE",
+            headers: {
+                "Authorization": token
+            }
+        });
+
+        return {
+            json: await response.json(), 
+            status: response.status
+        };
+
+    } catch (err) {
+        console.log(err);
+        return {json: {error: "Failed to make request"}, status: 500};
+    }
 
 }
 
-const shareNote = (userId, shareToUser, noteId, token) => {
+const shareNote = async (userId, shareToUser, noteId, token) => {
+    try {
+        const endpoint = `${URL}/share-note`;
 
+        const shareData = {
+            fromUserId: userId,
+            toUsername: shareToUser,
+            noteId: noteId
+        };
+
+        const response = await fetch(endpoint, {
+            method: "POST",
+            headers: {
+                "Authorization": token,
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(shareData)
+        });
+
+        return {
+            json: await response.json(), 
+            status: response.status
+        };
+
+    } catch (err) {
+        console.log(err);
+        return {json: {error: "Failed to make request"}, status: 500};
+    }
 }
 
+const deleteUser = async (userId, token) => {
+    try {
+        const endpoint = `${URL}/delete-user/${userId}`;
 
-export { loginUser, signupUser, getNotes, addNote, updateNote, deleteNote, shareNote };
+        const response = await fetch(endpoint, {
+            method: "DELETE",
+            headers: {
+                "Authorization": token,
+            },
+        });
+
+        return {
+            json: await response.json(), 
+            status: response.status
+        };
+
+    } catch (err) {
+        console.log(err);
+        return {json: {error: "Failed to make request"}, status: 500};
+    }
+    
+}
+
+export { loginUser, signupUser, getNotes, addNote, updateNote, deleteNote, shareNote, deleteUser };
