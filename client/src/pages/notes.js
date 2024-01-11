@@ -5,9 +5,17 @@ import { TextButton, RoundIconButton } from "../components/button";
 import { marked } from "marked";
 import { useParams } from "react-router-dom";
 import { addNote, getNotes, updateNote } from "../utils/DatabaseApi";
-//TODO: Fix note body not updating
 
-const NotePopup = ({noteTitle, noteBody, onDelete, onShare, onSave, onClose}) => {
+const NotePopup = ({
+    noteTitle,
+    noteBody,
+    handleTitleUpdate, 
+    handleNoteUpdate, 
+    onDelete, 
+    onShare, 
+    onSave, 
+    onClose
+}) => {
 
     const [markdown, setMarkdown] = useState(noteBody);
     const [preview, setPreview] = useState("");
@@ -21,15 +29,16 @@ const NotePopup = ({noteTitle, noteBody, onDelete, onShare, onSave, onClose}) =>
         updatePreview();
     }, [markdown]);
 
-    const handleNoteUpdate = (event) => {
+    const noteUpdate = (event) => {
         const noteBody = event.target.value;
         setMarkdown(noteBody);
+        handleNoteUpdate(noteBody);
     };
 
     return (
         <div class="popup-bg">
             <div class="header">
-                <input type="text" placeholder={noteTitle}/>
+                <input type="text" placeholder={noteTitle} onChange={handleTitleUpdate}/>
 
                 <div class="buttons">
                     <div class="text-buttons">
@@ -48,7 +57,7 @@ const NotePopup = ({noteTitle, noteBody, onDelete, onShare, onSave, onClose}) =>
                     id="markdown"
                     class="note-style"
                     value={markdown}
-                    onChange={handleNoteUpdate}
+                    onChange={noteUpdate}
                 ></textarea>
                 <div 
                     id="preview"
@@ -148,6 +157,14 @@ const NotesPage = () => {
         }
     }
 
+    const handleNoteUpdate = (newBody) => {
+        setNoteBody(newBody);
+    }
+
+    const handleTitleUpdate = (event) => {
+        setNoteTitle(event.target.value);
+    }
+
     return (
         <div class="background">
             <Toolbar username="Salahuddin" newNotePress={openNote}/>
@@ -164,6 +181,8 @@ const NotesPage = () => {
                 (<NotePopup 
                     noteTitle={noteTitle}
                     noteBody={noteBody}
+                    handleNoteUpdate={handleNoteUpdate}
+                    handleTitleUpdate={handleTitleUpdate}
                     onClose={closeNote}
                     onDelete={deleteNote}
                     onShare={shareNote}
