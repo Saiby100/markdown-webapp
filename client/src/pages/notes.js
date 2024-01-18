@@ -4,7 +4,7 @@ import Toolbar from "../components/toolbar";
 import { TextButton, RoundIconButton } from "../components/button";
 import { marked } from "marked";
 import { useParams } from "react-router-dom";
-import { addNote, getNotes, updateNote } from "../utils/DatabaseApi";
+import { addNote, getNotes, updateNote, deleteNote } from "../utils/DatabaseApi";
 
 const NotePopup = ({
     noteTitle,
@@ -113,13 +113,19 @@ const NotesPage = () => {
         setPopupVisible(false);
     }
 
-    const deleteNote = () => {
+    const deleteUserNote = async () => {
         setPopupVisible(false);
-        //TODO: handle delete
+        const deleteNoteRequest = await deleteNote(noteId, userId, token);
+
+        if (deleteNoteRequest.status === 201) {
+            //TODO: show popup
+            alert(`Message: ${deleteNoteRequest.json.message}`)
+        } else {
+            alert(`Message: ${deleteNoteRequest.json.error}`)
+        }
     }
 
     const saveNote = async () => {
-        setPopupVisible(false);
         if (noteIsNew) {
             const addNoteRequest = await addNote(userId, noteTitle, noteBody, token);
             if (addNoteRequest.status === 201) {
@@ -131,12 +137,13 @@ const NotesPage = () => {
         } else {
             const updateNoteRequest = await updateNote(noteId, noteTitle, noteBody, token);
             if (updateNoteRequest.status === 201) {
-                //TODO: show popup
+                //TODO: show fading popup
                 alert(`Message: ${updateNoteRequest.json.message}`)
             } else {
                 alert(`Message: ${updateNoteRequest.json.error}`)
             }
         }
+        setPopupVisible(false);
     }
 
     const shareNote = () => {
@@ -184,7 +191,7 @@ const NotesPage = () => {
                     handleNoteUpdate={handleNoteUpdate}
                     handleTitleUpdate={handleTitleUpdate}
                     onClose={closeNote}
-                    onDelete={deleteNote}
+                    onDelete={deleteUserNote}
                     onShare={shareNote}
                     onSave={saveNote}
                 />)
