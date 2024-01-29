@@ -4,7 +4,7 @@ import Toolbar from "../components/toolbar";
 import { TextButton, RoundIconButton } from "../components/button";
 import { marked } from "marked";
 import { useParams } from "react-router-dom";
-import { addNote, getNotes, updateNote, deleteNote } from "../utils/DatabaseApi";
+import { addNote, getNotes, updateNote, deleteNote, shareNote } from "../utils/DatabaseApi";
 import { TextField } from "../components/textfield";
 
 const NotePopup = ({
@@ -175,15 +175,18 @@ const NotesPage = () => {
         closeNote();
     }
 
-    const shareButtonPress = (username) => {
-        const successful = true;
-        //TODO: Request share note here
+    const shareButtonPress = async (username) => {
+        const shareNoteRequest = await shareNote(userId, username, noteId, token);
 
-        if (successful) {
+        if (shareNoteRequest.status === 201) {
             if (!sharedList.includes(username)) {
                 setsharedList(prevArray => [...prevArray, username]); //Append onto the array
             }
             setShareListVisible(false);
+
+            alert(`Message: ${shareNoteRequest.json.message}`)
+        } else {
+            alert(`Message: ${shareNoteRequest.json.error}`)
         }
 
     }
