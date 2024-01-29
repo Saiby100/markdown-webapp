@@ -213,7 +213,7 @@ app.post('/share-note', functions.authenticateToken, async (req, res) => {
             res.status(404).json({error: 'User not found'})
 
         } else {
-            if (fromUserId !== toUser.userid) {
+            if (Number(fromUserId) !== toUser.userid) {
                 await SharedNote.create({
                     noteid: noteId,
                     userid: toUser.userid
