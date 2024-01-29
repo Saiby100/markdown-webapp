@@ -106,6 +106,7 @@ const ShareListPopup = ({handleSend, sharedList}) => {
 const NotesPage = () => {
     const { userId } = useParams();
     const token = localStorage.getItem("authToken");
+    const username = localStorage.getItem("username");
 
     const [noteTitle, setNoteTitle] = useState("");
     const [noteBody, setNoteBody] = useState("");
@@ -213,7 +214,7 @@ const NotesPage = () => {
 
     return (
         <div class="background">
-            <Toolbar username="Salahuddin" newNotePress={openNote}/>
+            <Toolbar username={username} newNotePress={openNote}/>
 
             <div class="note-list">
                 {
