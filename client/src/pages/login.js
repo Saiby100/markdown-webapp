@@ -5,6 +5,7 @@ import { TextButton } from "../components/button";
 import {Link} from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { loginUser } from "../utils/DatabaseApi"
+import showToast from "../components/toast";
 
 const LoginPage = () => {
     const [username, setUsername] = useState("");
@@ -18,14 +19,14 @@ const LoginPage = () => {
 
         if (loginResponse.status === 201) {
             if (!loginResponse.json.userId) {
-                alert("No ID received from server");
+                showToast.error("No ID received from server");
             } else {
-                localStorage.setItem("authToken", loginResponse.json.token);
+                showToast.success(loginResponse.json.message);
                 navigate(`/notes/${loginResponse.json.userId}`);
             }
         } else {
             console.log(loginResponse);
-            alert(`Error: ${loginResponse.json.error}`)
+            showToast.error(loginResponse.json.error);
         }
     }
 
@@ -55,7 +56,6 @@ const LoginPage = () => {
 
                     <TextButton type="submit" text="Log In"/>
                 </form>
-
             </div>
         </div>   
     );

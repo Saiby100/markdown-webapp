@@ -25,7 +25,6 @@ const RecoverPage = () => {
 
                     <TextButton type="submit" text="Send Email"/>
                 </form>
-
             </div>
         </div>   
     );

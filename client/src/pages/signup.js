@@ -4,6 +4,7 @@ import { TextField } from "../components/textfield";
 import { TextButton } from "../components/button";
 import { useNavigate } from "react-router-dom";
 import { signupUser } from "../utils/DatabaseApi";
+import showToast from "../components/toast";
 
 const SignupPage = () => {
     const [email, setEmail] = useState("");
@@ -19,11 +20,11 @@ const SignupPage = () => {
             const signupResponse = await signupUser(email, username, password);
 
             if (signupResponse.status === 201) {
-                alert("Signup Successful");
+                showToast.success(signupResponse.json.message);
                 navigate('/');
 
             } else {
-                alert(`Error: ${signupResponse.json.error}`)
+                showToast.error(signupResponse.json.error);
             }
 
         } else {
@@ -69,7 +70,6 @@ const SignupPage = () => {
 
                     <TextButton type="submit" text="Sign Up"/>
                 </form>
-
             </div>
         </div>   
     );

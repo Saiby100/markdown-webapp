@@ -6,6 +6,7 @@ import { marked } from "marked";
 import { useParams } from "react-router-dom";
 import { addNote, getNotes, updateNote, deleteNote, shareNote } from "../utils/DatabaseApi";
 import { TextField } from "../components/textfield";
+import showToast from "../components/toast";
 
 const NotePopup = ({
     noteTitle,
@@ -146,10 +147,9 @@ const NotesPage = () => {
         const deleteNoteRequest = await deleteNote(noteId, userId, token);
 
         if (deleteNoteRequest.status === 201) {
-            //TODO: show popup
-            alert(`Message: ${deleteNoteRequest.json.message}`)
+            showToast.success(deleteNoteRequest.json.message);
         } else {
-            alert(`Message: ${deleteNoteRequest.json.error}`)
+            showToast.error(deleteNoteRequest.json.error);
         }
         closeNote();
     }
@@ -158,18 +158,16 @@ const NotesPage = () => {
         if (noteIsNew) {
             const addNoteRequest = await addNote(userId, noteTitle, noteBody, token);
             if (addNoteRequest.status === 201) {
-                //TODO: show popup
-                alert(`Message: ${addNoteRequest.json.message}`)
+                showToast.success(addNoteRequest.json.message);
             } else {
-                alert(`Message: ${addNoteRequest.json.error}`)
+                showToast.error(addNoteRequest.json.error);
             }
         } else {
             const updateNoteRequest = await updateNote(noteId, noteTitle, noteBody, token);
             if (updateNoteRequest.status === 201) {
-                //TODO: show fading popup
-                alert(`Message: ${updateNoteRequest.json.message}`)
+                showToast.success(updateNoteRequest.json.message);
             } else {
-                alert(`Message: ${updateNoteRequest.json.error}`)
+                showToast.error(updateNoteRequest.json.error);
             }
         }
         closeNote();
@@ -184,9 +182,9 @@ const NotesPage = () => {
             }
             setShareListVisible(false);
 
-            alert(`Message: ${shareNoteRequest.json.message}`)
+            showToast.success(shareNoteRequest.json.message);
         } else {
-            alert(`Message: ${shareNoteRequest.json.error}`)
+            showToast.error(shareNoteRequest.json.error);
         }
 
     }
@@ -242,7 +240,6 @@ const NotesPage = () => {
                 shareListVisible &&
                 (<ShareListPopup sharedList={sharedList} handleSend={shareButtonPress}/>)
             }
-
         </div>
     );
 }
