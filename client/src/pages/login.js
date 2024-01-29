@@ -22,6 +22,8 @@ const LoginPage = () => {
                 showToast.error("No ID received from server");
             } else {
                 showToast.success(loginResponse.json.message);
+                localStorage.setItem("authToken", loginResponse.json.token);
+                localStorage.setItem("username", username);
                 navigate(`/notes/${loginResponse.json.userId}`);
             }
         } else {
