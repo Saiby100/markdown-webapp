@@ -5,6 +5,7 @@ import { TextButton, RoundIconButton } from "../components/button";
 import { marked } from "marked";
 import { useParams } from "react-router-dom";
 import { addNote, getNotes, updateNote, deleteNote } from "../utils/DatabaseApi";
+import { TextField } from "../components/textfield";
 
 const NotePopup = ({
     noteTitle,
@@ -79,15 +80,42 @@ const Note = ({title, ...props}) => {
     );
 }
 
+const ShareListPopup = ({handleSend, sharedList}) => {
+    const [newUsername, setNewUsername] = useState("");
+
+    return (
+        <div class="share-list">
+            {
+            sharedList.map((name, index) => (
+                <p onClick={() => handleSend(name)}>{name}</p>
+            ))
+            }
+            <div class="input-container">
+                <TextField 
+                    placeholder="New User" 
+                    value={newUsername}
+                    onChange={e => setNewUsername(e.target.value)}/>
+                <TextButton text="Send" onClick={() => handleSend(newUsername)}/>
+            </div>
+        </div>
+
+    );
+}
+
 const NotesPage = () => {
     const { userId } = useParams();
+    const token = localStorage.getItem("authToken");
+
     const [noteTitle, setNoteTitle] = useState("");
     const [noteBody, setNoteBody] = useState("");
+
     const [popupVisible, setPopupVisible] = useState(false);
     const [notes, setNotes] = useState([]);
     const [noteIsNew, setNoteIsNew] = useState(false);
-    const token = localStorage.getItem("authToken");
     const [noteId, setNoteId] = useState(-1);
+
+    const [sharedList, setsharedList] = useState([]);
+    const [shareListVisible, setShareListVisible] = useState(false);
 
     useEffect(() => {
         updateNotes();
@@ -111,10 +139,10 @@ const NotesPage = () => {
 
     const closeNote = () => {
         setPopupVisible(false);
+        setShareListVisible(false);
     }
 
     const deleteUserNote = async () => {
-        setPopupVisible(false);
         const deleteNoteRequest = await deleteNote(noteId, userId, token);
 
         if (deleteNoteRequest.status === 201) {
@@ -123,6 +151,7 @@ const NotesPage = () => {
         } else {
             alert(`Message: ${deleteNoteRequest.json.error}`)
         }
+        closeNote();
     }
 
     const saveNote = async () => {
@@ -143,11 +172,20 @@ const NotesPage = () => {
                 alert(`Message: ${updateNoteRequest.json.error}`)
             }
         }
-        setPopupVisible(false);
+        closeNote();
     }
 
-    const shareNote = () => {
-        alert("Share note")
+    const shareButtonPress = (username) => {
+        const successful = true;
+        //TODO: Request share note here
+
+        if (successful) {
+            if (!sharedList.includes(username)) {
+                setsharedList(prevArray => [...prevArray, username]); //Append onto the array
+            }
+            setShareListVisible(false);
+        }
+
     }
 
     const updateNotes = async () => {
@@ -192,9 +230,14 @@ const NotesPage = () => {
                     handleTitleUpdate={handleTitleUpdate}
                     onClose={closeNote}
                     onDelete={deleteUserNote}
-                    onShare={shareNote}
+                    onShare={() => setShareListVisible(!shareListVisible)}
                     onSave={saveNote}
                 />)
+            }
+
+            {
+                shareListVisible &&
+                (<ShareListPopup sharedList={sharedList} handleSend={shareButtonPress}/>)
             }
 
         </div>
