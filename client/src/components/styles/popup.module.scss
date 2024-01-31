@@ -1,0 +1,50 @@
+@import "../../resources/colors";
+@import "../../resources/utils";
+
+.container {
+    display: flex;
+    flex-direction: column;
+    background-color: white;
+    border-radius: px-to-rem(15);
+    border: px-to-rem(2) solid $text-colour-dark;
+    padding: px-to-rem(15) 0px;
+    gap: px-to-rem(7);
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.buttonitem {
+    font-size: px-to-rem(18);
+    font-weight: 600;
+    color: $text-colour-dark;
+    margin: 0;
+    padding: px-to-rem(5) px-to-rem(20);
+    border-radius: px-to-rem(5);
+    border: none;
+    text-align: left;
+
+    &:hover {
+        cursor: pointer;
+        background-color: $primary-colour-light;
+    }
+}
+
+.inputcontainer {
+    display: flex;
+    padding: 0px px-to-rem(7);
+
+    input {
+        outline: none;
+        border: none;
+        font-size: px-to-rem(18);
+        padding-top: px-to-rem(5);
+        padding-bottom: px-to-rem(5);
+    }
+
+    button {
+        border-radius: px-to-rem(10);
+        font-size: px-to-rem(18)
+    }
+}
