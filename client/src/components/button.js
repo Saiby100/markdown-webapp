@@ -12,27 +12,16 @@ const TextButton = ({text, plain, ...props}) => {
     );
 }
 
-const IconButton = ({icon, ...props}) => {
-    return (
-        <button
-            {...props}
-            className={`${styles.plain} ${styles.scale} ${styles.round}`}
-        >
-            <img src={icon} alt="options" />
-        </button>
-    )
-}
-
-const RoundIconButton = ({icon, ...props}) => {
+const RoundIconButton = ({icon, alt, ...props}) => {
     return (
         <button
         {...props}
-        className={`${styles.plain} ${styles.round} ${styles.grey} ${styles.scale}`}
+        className={`${styles.plain} ${styles.round} ${styles.scale}`}
         >
-            <img src={icon} alt="close" />
+            <img src={icon} alt={alt} />
         </button>
     );
 }
 
 
-export {TextButton, IconButton, RoundIconButton};
+export {TextButton, RoundIconButton};
