@@ -52,7 +52,7 @@ const MenuListInput = ({options, inputField}) => {
     };
 
     return (
-        <div className={`${styles.container} popup`}>
+        <div className={`${styles.container}`}>
             {options.map((option, index) => (
                 <ListItem 
                     key={index} 
@@ -72,4 +72,22 @@ const MenuListInput = ({options, inputField}) => {
     );
 };
 
-export {MenuList, MenuListInput};
+const ChoiceMenu = ({options, textPrompt}) => {
+    return (
+        <div className={`${styles.container} ${styles.choicemenu}`}>
+            <h2>{textPrompt}</h2>
+            <div className={`${styles.flexrow}`}>
+                {options.map((option, index) => (
+                    <TextButton 
+                        key={index}
+                        text={option.text} 
+                        plain={!option.highlight} 
+                        onClick={option.onClick}/>
+                ))}
+            </div>
+        </div>
+    )
+
+}
+
+export {MenuList, MenuListInput, ChoiceMenu};

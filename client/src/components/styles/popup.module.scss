@@ -49,3 +49,27 @@
         font-size: px-to-rem(18)
     }
 }
+
+.choicemenu {
+    padding: px-to-rem(20) px-to-rem(30);
+    gap: px-to-rem(25);
+    color: $text-colour-dark;
+
+    h2 {
+        margin: 0px;
+        font-size: px-to-rem(20);
+        text-align: center;
+    }
+
+    button {
+        font-size: px-to-rem(18);
+        padding: px-to-rem(5) px-to-rem(10);
+        border-radius: px-to-rem(10);
+    }
+}
+
+.flexrow {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
