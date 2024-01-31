@@ -14,7 +14,7 @@ const io = new Server(server, {
     }
 });
 
-const PORT = process.env.PORT || 8008;
+const PORT = process.env.WEBSOCKET_PORT || 8008;
 
 const notes = new Map();
 const notesUsernames = new Map();
