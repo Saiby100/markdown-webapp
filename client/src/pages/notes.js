@@ -27,11 +27,17 @@ const NotePopup = ({
     const [previewBtn, setPreviewBtn] = useState("Preview");
 
     const [sharePopupVisible, setSharePopupVisible] = useState(false);
-    var shareList = [];
+    const [sharedList, setSharedList] = useState([]);
+
     const inputOptions = {
         placeholder: "New User",
         onClick: (username) => {
-            handleShare(username);
+            if (handleShare(username)) {
+                if (!sharedList.includes(username)) {
+                    setSharedList(prevValues => [...prevValues, username]);
+                }
+                setSharePopupVisible(false);
+            }
         }
     };
 
@@ -80,13 +86,14 @@ const NotePopup = ({
         <div class="popup-bg">
             <div class="header">
                 <div class="header-left">
-                    <RoundIconButton icon="/x.svg" onClick={onClose}/>
+                    <RoundIconButton icon="/x.svg" alt="close" onClick={onClose}/>
                     <input type="text" placeholder={noteTitle} onChange={handleTitleUpdate}/>
                 </div>
                 <div class="header-right">
                     <TextButton text={previewBtn} onClick={showPreview}/>
-                    <IconButton 
+                    <RoundIconButton 
                         icon="/options.svg" 
+                        alt="options"
                         onClick={() => setMenuPopupVisible(!menuPopupVisible)}/>
                 </div>
             </div>
@@ -117,7 +124,7 @@ const NotePopup = ({
                 (
                     <ClickAwayListener onClickAway={() => setSharePopupVisible(false)}>
                         <div>
-                            <MenuListInput options={shareList} inputField={inputOptions} />
+                            <MenuListInput options={sharedList} inputField={inputOptions} />
                         </div>
                     </ClickAwayListener>
                 )
