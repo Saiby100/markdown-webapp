@@ -12,6 +12,10 @@
 .gradient {
     background: linear-gradient(to right, $primary-colour-dark, $secondary-colour);
     color: white;
+
+    &:hover {
+        background: $primary-colour-light;
+    }
 }
 
 .grey {
@@ -33,5 +37,8 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    border-radius: 50%; 
+    // background-color: red;
+    &:hover {
+        background-color: $primary-colour-light;
+    }
 }
