@@ -33,124 +33,70 @@
     position: absolute;
     left: 50%;
     transform: translateX(-50%);
-    width: 90%;
-    top: 5%;
+    width: 80%;
+    top: 15%;
     border-radius: px-to-rem(10);
     padding: 0px px-to-rem(10);
-    height: 90%;
+    height: 80%;
     display: flex;
     flex-direction: column;
+    max-width: px-to-rem(860);
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+
 
     .header {
         display: flex;
+        align-items: center;
         justify-content: space-between;
-        padding: px-to-rem(15);
-        padding-left: px-to-rem(50);
-        padding-right: px-to-rem(30);
+        padding: px-to-rem(15) px-to-rem(5);
+
+        .header-left {
+            display: flex;
+            align-items: center;
+        }
+
+        .header-right {
+            align-items: center;
+            display: flex;
+            gap: 2;
+        }
 
         input {
+            margin-left: px-to-rem(15);
             font-size: px-to-rem(24);
             border: none;
             color: $text-colour-dark;
-            width: 50%;
 
             &:focus {
                 outline: none;
             }
         }
 
-        .buttons {
-            display: flex;
-            gap: px-to-rem(15);
-            align-items: center;
-
-            .text-buttons {
-                display: flex;
-                gap: px-to-rem(10);
-                margin-right: px-to-rem(10);
-
-                button {
-                    font-size: px-to-rem(16);
-                    padding: px-to-rem(10) px-to-rem(20);
-                    border-radius: px-to-rem(50);
-                }
-            }
+        button {
+            font-size: px-to-rem(16);
+            padding: px-to-rem(10) px-to-rem(20);
+            border-radius: px-to-rem(50);
         }
     }
 
-    .note-area {
-        flex: 1;
-        display: flex;
-        gap: px-to-rem(20);
+    textarea {
+        resize: none;
+        font-size: px-to-rem(18);
+        color: $text-colour-dark;
+        border: none;
+        border-top: px-to-rem(1) solid $text-colour-dark;
 
-        textarea {
-            width: 50%;
-            resize: none;
-            border-bottom: none;
-            font-size: px-to-rem(18);
-            color: gray;
-
-            &:focus {
-                outline: none;
-            }
-        }
-
-        div {
-            width: 50%;
+        &:focus {
+            outline: none;
         }
     }
 }
 
 .note-style {
-    border: px-to-rem(2) solid $text-colour-dark;
-    border-top-right-radius: px-to-rem(15);
-    border-top-left-radius: px-to-rem(15);
+    border-top: px-to-rem(1) solid $text-colour-dark;
     padding-top: px-to-rem(10);
+    color: $text-colour-dark;
     padding-left: px-to-rem(10);
     border-bottom: none;
-}
-
-.share-list {
-    display: flex;
-    flex-direction: column;
-    background-color: white;
-    position: absolute;
-    border-radius: px-to-rem(15);
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    padding: px-to-rem(25) px-to-rem(20);
-    gap: px-to-rem(10);
-    border: px-to-rem(2) solid $text-colour-dark;
-
-    p {
-        font-size: px-to-rem(18);
-        font-weight: 600;
-        color: $text-colour-dark;
-        margin: 0;
-        padding: px-to-rem(5) px-to-rem(12);
-        border-radius: px-to-rem(10);
-
-        &:hover {
-            cursor: pointer;
-            background-color: $primary-colour-light;
-        }
-    }
-
-    .input-container{
-        display: flex;
-
-        input {
-            outline: none;
-            border: none;
-            font-size: px-to-rem(18);
-            padding-top: px-to-rem(5);
-            padding-bottom: px-to-rem(5);
-        }
-
-        button {
-            border-radius: px-to-rem(10);
-            font-size: px-to-rem(18)
-        }
-    }
+    height: 100%;
 }

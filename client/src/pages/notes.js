@@ -1,12 +1,13 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import "./styles/notes.scss"
 import Toolbar from "../components/toolbar";
-import { TextButton, RoundIconButton } from "../components/button";
+import { TextButton, RoundIconButton, IconButton } from "../components/button";
 import { marked } from "marked";
 import { useParams } from "react-router-dom";
 import { addNote, getNotes, updateNote, deleteNote, shareNote } from "../utils/DatabaseApi";
-import { TextField } from "../components/textfield";
 import showToast from "../components/toast";
+import { MenuList, MenuListInput } from "../components/popup";
+import ClickAwayListener from "react-click-away-listener";
 
 const NotePopup = ({
     noteTitle,
@@ -14,13 +15,40 @@ const NotePopup = ({
     handleTitleUpdate, 
     handleNoteUpdate, 
     onDelete, 
-    onShare, 
+    handleShare, 
     onSave, 
     onClose
 }) => {
 
     const [markdown, setMarkdown] = useState(noteBody);
     const [preview, setPreview] = useState("");
+
+    const [previewVisible, setPreviewVisible] = useState(false);
+
+    const [sharePopupVisible, setSharePopupVisible] = useState(false);
+    var shareList = [];
+    const inputOptions = {
+        placeholder: "New User",
+        onClick: (username) => {
+            handleShare(username);
+        }
+    };
+
+    const [menuPopupVisible, setMenuPopupVisible] = useState(false);
+    const menuOptions = [
+        {text: "Save", onClick: () => {
+            onSave();
+            setMenuPopupVisible(false);
+        }},
+        {text: "Share", onClick: () => {
+            setSharePopupVisible(!sharePopupVisible);
+            setMenuPopupVisible(false);
+        }},
+        {text: "Delete", onClick: () => {
+            onDelete();
+            setMenuPopupVisible(false);
+        }}
+    ];
 
     const updatePreview = () => {
         const preview = marked(markdown);
@@ -37,38 +65,67 @@ const NotePopup = ({
         handleNoteUpdate(noteBody);
     };
 
+    const showPreview = () => {
+        setPreviewVisible(!previewVisible);
+    }
+
+
     return (
         <div class="popup-bg">
             <div class="header">
-                <input type="text" placeholder={noteTitle} onChange={handleTitleUpdate}/>
-
-                <div class="buttons">
-                    <div class="text-buttons">
-                        <TextButton text="Delete" plain={true} onClick={onDelete}/>
-                        <TextButton text="Share" plain={true} onClick={onShare}/>
-                        <TextButton text="Save" onClick={onSave}/>
-                    </div>
-                    <div class="icon-buttons">
-                        <RoundIconButton icon="/x.svg" onClick={onClose}/>
-                    </div>
+                <div class="header-left">
+                    <RoundIconButton icon="/x.svg" onClick={onClose}/>
+                    <input type="text" placeholder={noteTitle} onChange={handleTitleUpdate}/>
+                </div>
+                <div class="header-right">
+                    <TextButton text="Preview" onClick={showPreview}/>
+                    <IconButton 
+                        icon="/options.svg" 
+                        onClick={() => setMenuPopupVisible(!menuPopupVisible)}/>
                 </div>
             </div>
-
-            <div class="note-area">
-                <textarea 
-                    id="markdown"
-                    class="note-style"
-                    value={markdown}
-                    onChange={noteUpdate}
-                ></textarea>
-                <div 
-                    id="preview"
-                    class="note-style"
-                    dangerouslySetInnerHTML={{__html: preview}}
-                >
-                </div>
-            </div>
-
+            {
+                !previewVisible && 
+                (
+                    <textarea 
+                        id="markdown"
+                        class="note-style"
+                        value={markdown}
+                        onChange={noteUpdate}
+                    ></textarea>
+                )
+            }
+            {
+                previewVisible && 
+                (
+                    <div 
+                        id="preview"
+                        class="note-style"
+                        dangerouslySetInnerHTML={{__html: preview}}
+                    >
+                    </div>
+                )
+            }
+            {
+                sharePopupVisible &&
+                (
+                    <ClickAwayListener onClickAway={() => setSharePopupVisible(false)}>
+                        <div>
+                            <MenuListInput options={shareList} inputField={inputOptions} />
+                        </div>
+                    </ClickAwayListener>
+                )
+            }
+            {
+                menuPopupVisible &&
+                (
+                    <ClickAwayListener onClickAway={() => setMenuPopupVisible(false)}>
+                        <div>
+                            <MenuList options={menuOptions}/>
+                        </div>
+                    </ClickAwayListener>
+                )
+            }
         </div>
     );
 }
@@ -81,27 +138,6 @@ const Note = ({title, ...props}) => {
     );
 }
 
-const ShareListPopup = ({handleSend, sharedList}) => {
-    const [newUsername, setNewUsername] = useState("");
-
-    return (
-        <div class="share-list">
-            {
-            sharedList.map((name, index) => (
-                <p onClick={() => handleSend(name)}>{name}</p>
-            ))
-            }
-            <div class="input-container">
-                <TextField 
-                    placeholder="New User" 
-                    value={newUsername}
-                    onChange={e => setNewUsername(e.target.value)}/>
-                <TextButton text="Send" onClick={() => handleSend(newUsername)}/>
-            </div>
-        </div>
-
-    );
-}
 
 const NotesPage = () => {
     const { userId } = useParams();
@@ -116,8 +152,6 @@ const NotesPage = () => {
     const [noteIsNew, setNoteIsNew] = useState(false);
     const [noteId, setNoteId] = useState(-1);
 
-    const [sharedList, setsharedList] = useState([]);
-    const [shareListVisible, setShareListVisible] = useState(false);
 
     useEffect(() => {
         updateNotes();
@@ -141,7 +175,6 @@ const NotesPage = () => {
 
     const closeNote = () => {
         setPopupVisible(false);
-        setShareListVisible(false);
     }
 
     const deleteUserNote = async () => {
@@ -174,20 +207,16 @@ const NotesPage = () => {
         closeNote();
     }
 
-    const shareButtonPress = async (username) => {
+    const handleShareNote = async (username) => {
         const shareNoteRequest = await shareNote(userId, username, noteId, token);
 
         if (shareNoteRequest.status === 201) {
-            if (!sharedList.includes(username)) {
-                setsharedList(prevArray => [...prevArray, username]); //Append onto the array
-            }
-            setShareListVisible(false);
-
             showToast.success(shareNoteRequest.json.message);
         } else {
             showToast.error(shareNoteRequest.json.error);
         }
 
+        return shareNoteRequest === 201
     }
 
     const updateNotes = async () => {
@@ -232,15 +261,11 @@ const NotesPage = () => {
                     handleTitleUpdate={handleTitleUpdate}
                     onClose={closeNote}
                     onDelete={deleteUserNote}
-                    onShare={() => setShareListVisible(!shareListVisible)}
+                    handleShare={handleShareNote}
                     onSave={saveNote}
                 />)
             }
 
-            {
-                shareListVisible &&
-                (<ShareListPopup sharedList={sharedList} handleSend={shareButtonPress}/>)
-            }
         </div>
     );
 }
