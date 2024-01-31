@@ -43,7 +43,6 @@
     max-width: px-to-rem(860);
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
 
-
     .header {
         display: flex;
         align-items: center;
@@ -52,16 +51,20 @@
 
         .header-left {
             display: flex;
+            width: 80%;
             align-items: center;
         }
 
         .header-right {
-            align-items: center;
             display: flex;
-            gap: 2;
+            align-items: center;
+            justify-content: flex-end;
+            gap: px-to-rem(7);
+            width: 50%;
         }
 
         input {
+            width: 100%;
             margin-left: px-to-rem(15);
             font-size: px-to-rem(24);
             border: none;
@@ -97,6 +100,5 @@
     padding-top: px-to-rem(10);
     color: $text-colour-dark;
     padding-left: px-to-rem(10);
-    border-bottom: none;
     height: 100%;
 }

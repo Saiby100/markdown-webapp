@@ -24,6 +24,7 @@ const NotePopup = ({
     const [preview, setPreview] = useState("");
 
     const [previewVisible, setPreviewVisible] = useState(false);
+    const [previewBtn, setPreviewBtn] = useState("Preview");
 
     const [sharePopupVisible, setSharePopupVisible] = useState(false);
     var shareList = [];
@@ -67,6 +68,11 @@ const NotePopup = ({
 
     const showPreview = () => {
         setPreviewVisible(!previewVisible);
+        if (!previewVisible) {
+            setPreviewBtn("Edit");
+        } else {
+            setPreviewBtn("Preview");
+        }
     }
 
 
@@ -78,7 +84,7 @@ const NotePopup = ({
                     <input type="text" placeholder={noteTitle} onChange={handleTitleUpdate}/>
                 </div>
                 <div class="header-right">
-                    <TextButton text="Preview" onClick={showPreview}/>
+                    <TextButton text={previewBtn} onClick={showPreview}/>
                     <IconButton 
                         icon="/options.svg" 
                         onClick={() => setMenuPopupVisible(!menuPopupVisible)}/>
