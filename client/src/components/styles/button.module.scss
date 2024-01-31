@@ -12,15 +12,17 @@
 .gradient {
     background: linear-gradient(to right, $primary-colour-dark, $secondary-colour);
     color: white;
-
-    &:hover {
-        background: $primary-colour-light;
-    }
 }
 
 .grey {
     background-color: #DFDFDF;
     color: $text-colour-dark;
+}
+
+.hovereffect {
+    &:hover {
+        background: $primary-colour-light;
+    }
 }
 
 .plain {

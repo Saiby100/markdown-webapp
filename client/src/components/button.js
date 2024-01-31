@@ -7,7 +7,7 @@ const TextButton = ({text, plain, ...props}) => {
     return (
         <button
             {...props}
-            className={`${styles.textbtn} ${buttonColour}`} 
+            className={`${styles.textbtn} ${buttonColour} ${styles.hovereffect}`} 
         >{text}</button>
     );
 }
