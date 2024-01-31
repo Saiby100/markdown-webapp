@@ -16,7 +16,7 @@ const IconButton = ({icon, ...props}) => {
     return (
         <button
             {...props}
-            className={`${styles.plain} ${styles.scale}`}
+            className={`${styles.plain} ${styles.scale} ${styles.round}`}
         >
             <img src={icon} alt="options" />
         </button>
