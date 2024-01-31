@@ -14,9 +14,19 @@
     color: white;
 }
 
-.plain {
+.grey {
     background-color: #DFDFDF;
     color: $text-colour-dark;
+}
+
+.plain {
+    border: none;
+    cursor: pointer;
+}
+
+.scale {
+    width: px-to-rem(40);
+    height: px-to-rem(40);
 }
 
 .round {
@@ -24,8 +34,4 @@
     align-items: center;
     justify-content: center;
     border-radius: 50%; 
-    width: px-to-rem(40);
-    height: px-to-rem(40);
-    border: none;
-    cursor: pointer;
 }

@@ -2,7 +2,7 @@ import React from "react";
 import styles from "./styles/button.module.scss";
 
 const TextButton = ({text, plain, ...props}) => {
-    const buttonColour = plain ? styles.plain : styles.gradient;
+    const buttonColour = plain ? styles.grey : styles.gradient;
 
     return (
         <button
@@ -12,11 +12,22 @@ const TextButton = ({text, plain, ...props}) => {
     );
 }
 
+const IconButton = ({icon, ...props}) => {
+    return (
+        <button
+            {...props}
+            className={`${styles.plain} ${styles.scale}`}
+        >
+            <img src={icon} alt="options" />
+        </button>
+    )
+}
+
 const RoundIconButton = ({icon, ...props}) => {
     return (
         <button
         {...props}
-        className={`${styles.plain} ${styles.round}`}
+        className={`${styles.plain} ${styles.round} ${styles.grey} ${styles.scale}`}
         >
             <img src={icon} alt="close" />
         </button>
@@ -24,4 +35,4 @@ const RoundIconButton = ({icon, ...props}) => {
 }
 
 
-export {TextButton, RoundIconButton};
+export {TextButton, IconButton, RoundIconButton};
