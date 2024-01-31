@@ -16,7 +16,7 @@ app.use(cors({
     allowedHeaders: 'Content-Type,Authorization'
 }));
 app.use(express.json());
-const port = 8000;
+const port = 8000 || process.env.API_PORT;
 
 const sequelize = new Sequelize(process.env.DATABASE_URL, {
   dialect: 'postgres',
