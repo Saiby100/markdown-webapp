@@ -7,6 +7,7 @@ import { useParams } from "react-router-dom";
 import { addNote, getNotes, updateNote, deleteNote, shareNote } from "../utils/DatabaseApi";
 import showToast from "../components/toast";
 import { ChoiceMenu, MenuList, MenuListInput } from "../components/popup";
+import { io } from "socket.io-client";
 import ClickAwayListener from "react-click-away-listener";
 
 const NotePopup = ({
@@ -192,11 +193,48 @@ const NotesPage = () => {
     const [noteIsNew, setNoteIsNew] = useState(false);
     const [noteId, setNoteId] = useState(-1);
 
+    const [socket, setSocket] = useState(null);
+
+    const [allUsers, setAllUsers] = useState([]);
+    const [connectedUsers, setConnectedUsers] = useState([]);
 
     useEffect(() => {
         updateNotes();
     }, [popupVisible]);
-    
+
+    const initSocket = () => {
+        const newSocket = io("http://localhost:3000");
+
+        newSocket.on("connect", () => {
+            console.log("You have connected to the server.");
+        });
+
+        newSocket.emit("join-note", noteId, username);
+        setSocket(newSocket);
+
+        newSocket.on("new-connection", (allUsers) => {
+            if (allUsers.length == 0) {
+                newSocket.emit("note-init", noteId, noteTitle, noteBody);
+            } else {
+                console.log("Not first user");
+                newSocket.emit("get-latest-note", noteId);
+            }
+
+            const array = [];
+            for (const user of allUsers) {
+                const userIcon = {
+                    name: user,
+                    icon: "/icon.png"
+                };
+                array.push(userIcon);
+            }
+            setConnectedUsers(array);
+
+            console.log("I just connected, clients are:", allUsers);
+        });
+
+
+    }
 
     const openNote = (note = null) => {
         if (note !== null) {
