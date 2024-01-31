@@ -6,7 +6,7 @@ import { marked } from "marked";
 import { useParams } from "react-router-dom";
 import { addNote, getNotes, updateNote, deleteNote, shareNote } from "../utils/DatabaseApi";
 import showToast from "../components/toast";
-import { MenuList, MenuListInput } from "../components/popup";
+import { ChoiceMenu, MenuList, MenuListInput } from "../components/popup";
 import ClickAwayListener from "react-click-away-listener";
 
 const NotePopup = ({
@@ -29,6 +29,17 @@ const NotePopup = ({
     const [sharePopupVisible, setSharePopupVisible] = useState(false);
     const [sharedList, setSharedList] = useState([]);
 
+    const [discardPopupVisible, setDiscardPopupVisible] = useState(false);
+    const [noteChanged, setNoteChanged] = useState(false);
+    const discardOptions = [
+        {text: "No! Save it", highlight: true, onClick: () => {
+            onSave();
+        }},
+        {text: "I'm Sure", highlight: false, onClick: () => {
+            onClose();
+        }}
+    ]
+
     const inputOptions = {
         placeholder: "New User",
         onClick: (username) => {
@@ -45,7 +56,6 @@ const NotePopup = ({
     const menuOptions = [
         {text: "Save", onClick: () => {
             onSave();
-            setMenuPopupVisible(false);
         }},
         {text: "Share", onClick: () => {
             setSharePopupVisible(!sharePopupVisible);
@@ -53,7 +63,6 @@ const NotePopup = ({
         }},
         {text: "Delete", onClick: () => {
             onDelete();
-            setMenuPopupVisible(false);
         }}
     ];
 
@@ -70,6 +79,7 @@ const NotePopup = ({
         const noteBody = event.target.value;
         setMarkdown(noteBody);
         handleNoteUpdate(noteBody);
+        setNoteChanged(true);
     };
 
     const showPreview = () => {
@@ -81,12 +91,19 @@ const NotePopup = ({
         }
     }
 
+    const handleNoteClose = () => {
+        if (noteChanged) {
+            setDiscardPopupVisible(true);
+        } else {
+            onClose();
+        }
+    }
 
     return (
         <div class="popup-bg">
             <div class="header">
                 <div class="header-left">
-                    <RoundIconButton icon="/x.svg" alt="close" onClick={onClose}/>
+                    <RoundIconButton icon="/x.svg" alt="close" onClick={handleNoteClose}/>
                     <input type="text" placeholder={noteTitle} onChange={handleTitleUpdate}/>
                 </div>
                 <div class="header-right">
@@ -135,6 +152,16 @@ const NotePopup = ({
                     <ClickAwayListener onClickAway={() => setMenuPopupVisible(false)}>
                         <div>
                             <MenuList options={menuOptions}/>
+                        </div>
+                    </ClickAwayListener>
+                )
+            }
+            {
+                discardPopupVisible &&
+                (
+                    <ClickAwayListener onClickAway={() => setDiscardPopupVisible(false)}>
+                        <div>
+                            <ChoiceMenu options={discardOptions} textPrompt={"Are you sure you want to discard your changes?"}/>
                         </div>
                     </ClickAwayListener>
                 )
@@ -253,6 +280,7 @@ const NotesPage = () => {
     const handleTitleUpdate = (event) => {
         setNoteTitle(event.target.value);
     }
+
 
     return (
         <div class="background">
