@@ -25,6 +25,10 @@
     }
 }
 
+.nobg {
+    background-color: none;
+}
+
 .plain {
     border: none;
     cursor: pointer;
@@ -39,8 +43,12 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    // background-color: red;
-    &:hover {
-        background-color: $primary-colour-light;
+    border-radius: 50%;
+}
+
+.fitimage {
+    img {
+        width: px-to-rem(40);
+        height: px-to-rem(40);
     }
 }

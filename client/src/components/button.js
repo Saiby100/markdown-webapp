@@ -12,11 +12,36 @@ const TextButton = ({text, plain, ...props}) => {
     );
 }
 
-const RoundIconButton = ({icon, alt, ...props}) => {
+const RoundIconButton = ({icon, plain, alt, ...props}) => {
+    const buttonColour = plain ? styles.nobg : styles.gradient;
+
     return (
         <button
         {...props}
-        className={`${styles.plain} ${styles.round} ${styles.scale}`}
+        className={`
+            ${styles.plain} 
+            ${styles.round} 
+            ${styles.scale} 
+            ${buttonColour}
+            ${styles.hovereffect}
+        `}
+        >
+            <img src={icon} alt={alt} />
+        </button>
+    );
+}
+
+const ProfileButton = ({icon, plain, alt, ...props}) => {
+
+    return (
+        <button
+        {...props}
+        className={`
+            ${styles.plain} 
+            ${styles.scale} 
+            ${styles.round} 
+            ${styles.fitimage} 
+        `}
         >
             <img src={icon} alt={alt} />
         </button>
@@ -24,4 +49,4 @@ const RoundIconButton = ({icon, alt, ...props}) => {
 }
 
 
-export {TextButton, RoundIconButton};
+export {TextButton, RoundIconButton, ProfileButton};
