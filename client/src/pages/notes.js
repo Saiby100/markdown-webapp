@@ -192,7 +192,11 @@ const NotePopup = ({
         <div class="popup-bg">
             <div class="header">
                 <div class="header-left">
-                    <RoundIconButton icon="/x.svg" alt="close" onClick={handleNoteClose}/>
+                    <RoundIconButton 
+                        icon="/x.svg" 
+                        alt="close" 
+                        plain={true}
+                        onClick={handleNoteClose}/>
                     <input 
                         type="text" 
                         placeholder={"Note Title"} 
@@ -203,6 +207,7 @@ const NotePopup = ({
                     <TextButton text={previewBtn} onClick={showPreview}/>
                     <RoundIconButton 
                         icon="/options.svg" 
+                        plain={true}
                         alt="options"
                         onClick={() => setMenuPopupVisible(!menuPopupVisible)}/>
                 </div>
@@ -375,6 +380,10 @@ const NotesPage = () => {
         setNoteTitle(noteTitle);
     }
 
+    const handleSearch = () => {
+        alert("TODO: Implement search.");
+    }
+
     const noteFunctions = {
         handleUpdate: handleNoteUpdate,
         handleTitleUpdate: handleTitleUpdate,
@@ -382,11 +391,16 @@ const NotesPage = () => {
         handleDelete: deleteUserNote,
         handleShare: handleShareNote,
         handleSave: saveNote
-    }
+    };
+
+    const toolbarFunctions = {
+        newNotePress: openNote,
+        searchPress: handleSearch
+    };
 
     return (
         <div class="background">
-            <Toolbar username={username} newNotePress={openNote}/>
+            <Toolbar username={username} toolFunctions={toolbarFunctions}/>
 
             <div class="note-list">
                 {
