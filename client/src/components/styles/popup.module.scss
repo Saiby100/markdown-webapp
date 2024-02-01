@@ -7,12 +7,13 @@
     background-color: white;
     border-radius: px-to-rem(15);
     border: px-to-rem(2) solid $text-colour-dark;
-    padding: px-to-rem(15) 0px;
+    padding: px-to-rem(15) px-to-rem(2);
     gap: px-to-rem(7);
     position: absolute;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
+    min-width: 35%;
 }
 
 .buttonitem {
@@ -23,7 +24,6 @@
     padding: px-to-rem(5) px-to-rem(20);
     border-radius: px-to-rem(5);
     border: none;
-    text-align: left;
 
     &:hover {
         cursor: pointer;
