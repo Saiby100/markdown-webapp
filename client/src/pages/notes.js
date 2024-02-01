@@ -30,6 +30,7 @@ const NotePopup = ({
 
     const inputOptions = {
         placeholder: "New User",
+        buttonText: "Share",
         onClick: (username) => {
             if (functions.handleShare(username)) {
                 if (!sharedList.includes(username)) {
@@ -278,6 +279,18 @@ const NotesPage = () => {
     const [selectedNote, setSelectedNote] = useState(null);
 
     const [popupVisible, setPopupVisible] = useState(false);
+
+    const [searchPopupVisible, setSearchPopupVisible] = useState(false);
+    const [searchHistory, setSearchHistory] = useState([]);
+    const searchOptions = {
+        placeholder: "Search Note",
+        buttonText: "Search",
+        onClick: (string) => {
+            handleSearch(string);
+        }
+    };
+
+
     const [notes, setNotes] = useState([]);
     const [noteIsNew, setNoteIsNew] = useState(false);
 
@@ -380,8 +393,9 @@ const NotesPage = () => {
         setNoteTitle(noteTitle);
     }
 
-    const handleSearch = () => {
-        alert("TODO: Implement search.");
+    const handleSearch = (string) => {
+        alert(`TODO: Search for ${string}`);
+        setSearchHistory(prevHistory => [...prevHistory, string]);
     }
 
     const noteFunctions = {
@@ -395,7 +409,7 @@ const NotesPage = () => {
 
     const toolbarFunctions = {
         newNotePress: openNote,
-        searchPress: handleSearch
+        searchPress: () => setSearchPopupVisible(true)
     };
 
     return (
@@ -416,6 +430,16 @@ const NotesPage = () => {
                     note={selectedNote}
                     functions={noteFunctions}
                 />)
+            }
+            {
+                searchPopupVisible && 
+                (
+                    <ClickAwayListener onClickAway={() => setSearchPopupVisible(false)}>
+                        <div>
+                            <MenuListInput options={searchHistory} inputField={searchOptions} />
+                        </div>
+                    </ClickAwayListener>
+                )
             }
 
         </div>
