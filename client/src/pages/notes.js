@@ -24,16 +24,7 @@ const NotePopup = ({
     const [sharePopupVisible, setSharePopupVisible] = useState(false);
     const [sharedList, setSharedList] = useState([]);
 
-    const [discardPopupVisible, setDiscardPopupVisible] = useState(false);
     const [noteChanged, setNoteChanged] = useState(false);
-    const discardOptions = [
-        {text: "No", highlight: true, onClick: () => {
-            functions.handleSave();
-        }},
-        {text: "Yes", highlight: false, onClick: () => {
-            functions.handleClose();
-        }}
-    ]
 
     const inputOptions = {
         placeholder: "New User",
@@ -51,6 +42,8 @@ const NotePopup = ({
     const menuOptions = [
         {text: "Save", onClick: () => {
             functions.handleSave();
+            setNoteChanged(false);
+            setMenuPopupVisible(false);
         }},
         {text: "Share", onClick: () => {
             setSharePopupVisible(!sharePopupVisible);
@@ -61,6 +54,14 @@ const NotePopup = ({
         }}
     ];
 
+    const username = localStorage.getItem("username");
+
+    const [socket, setSocket] = useState(null);
+    const [useSocket, setUseSocket] = useState(note.noteid < -2);
+
+    const [allUsers, setAllUsers] = useState([]);
+    const [connectedUsers, setConnectedUsers] = useState([]);
+
     const updatePreview = () => {
         const preview = marked(markdown);
         setPreview(preview);
@@ -70,10 +71,91 @@ const NotePopup = ({
         updatePreview();
     }, [markdown]);
 
-    const noteUpdate = (event) => {
-        const noteBody = event.target.value;
-        setMarkdown(noteBody);
-        functions.handleUpdate(noteBody);
+    useEffect(() => {
+        if (useSocket) {
+            alert("Attempted to connect to socket.");
+
+            const newSocket = io("http://localhost:3000");
+
+            newSocket.on("connect", () => {
+                console.log("You have connected to the server.");
+            });
+
+            newSocket.emit("join-note", note.noteid, username);
+            setSocket(newSocket);
+
+            //
+            newSocket.on("new-connection", (allUsers) => {
+                if (allUsers.length == 0) {
+                    newSocket.emit("note-init", note.noteid, note.title, note.text);
+                } else {
+                    console.log("Not first user");
+                    newSocket.emit("get-latest-note", note.noteid);
+                }
+
+                const array = [];
+                for (const user of allUsers) {
+                    const userIcon = {
+                        name: user,
+                        icon: "/icon.png"
+                    };
+                    array.push(userIcon);
+                }
+                setConnectedUsers(array);
+
+                console.log("I just connected, clients are:", allUsers);
+            });
+
+            //Update current connected users when new user joins
+            newSocket.on("add-connection", (user) => {
+                setConnectedUsers((prevConnectedUsers) => {
+                    const userIcon = {
+                        name: user,
+                        icon: "/icon.png"
+                    }
+
+                    return [...prevConnectedUsers, userIcon];
+                });
+                console.log("New client joined, here's the username:", user);
+            });
+
+            newSocket.on("lost-connection", (lostUser) => {
+                setConnectedUsers((allConnectedUsers) => {
+                    return allConnectedUsers.filter(user => user.name !== lostUser);
+                });
+                console.log("Client left, here's the username:", lostUser);
+            });
+
+            newSocket.on("update-note", (noteTitle, noteBody) => {
+                if (noteTitle) {
+                    functions.handleTitleUpdate(noteTitle)
+                }
+                if (noteBody) {
+                    handleNoteUpdate(noteBody);
+                }
+            });
+
+            newSocket.on("update-title", (title) => {
+                functions.handleTitleUpdate(title);
+            });
+
+            }
+    });
+
+    const handleTitleUpdate = (noteTitle) => {
+        functions.handleTitleUpdate(noteTitle);
+        if (!noteChanged) {
+            setNoteChanged(true);
+        }
+    }
+
+    const handleNoteUpdate = (noteText) => {
+        setMarkdown(noteText);
+        functions.handleUpdate(noteText);
+
+        if (useSocket) {
+            socket.emit("note-update", note.noteid, note.text);
+        }
 
         if (!noteChanged) {
             setNoteChanged(true);
@@ -91,10 +173,9 @@ const NotePopup = ({
 
     const handleNoteClose = () => {
         if (noteChanged) {
-            setDiscardPopupVisible(true);
-        } else {
-            functions.handleClose();
+            functions.handleSave();
         }
+        functions.handleClose();
     }
 
     return (
@@ -102,7 +183,10 @@ const NotePopup = ({
             <div class="header">
                 <div class="header-left">
                     <RoundIconButton icon="/x.svg" alt="close" onClick={handleNoteClose}/>
-                    <input type="text" placeholder={note.title} onChange={functions.handleTitleUpdate}/>
+                    <input 
+                        type="text" 
+                        placeholder={note.title} 
+                        onChange={e => handleTitleUpdate(e.target.value)}/>
                 </div>
                 <div class="header-right">
                     <TextButton text={previewBtn} onClick={showPreview}/>
@@ -119,7 +203,7 @@ const NotePopup = ({
                         id="markdown"
                         class="note-style"
                         value={markdown}
-                        onChange={noteUpdate}
+                        onChange={e => handleNoteUpdate(e.target.value)}
                     ></textarea>
                 )
             }
@@ -154,16 +238,6 @@ const NotePopup = ({
                     </ClickAwayListener>
                 )
             }
-            {
-                discardPopupVisible &&
-                (
-                    <ClickAwayListener onClickAway={() => setDiscardPopupVisible(false)}>
-                        <div>
-                            <ChoiceMenu options={discardOptions} textPrompt={"Discard your changes?"}/>
-                        </div>
-                    </ClickAwayListener>
-                )
-            }
         </div>
     );
 }
@@ -191,80 +265,9 @@ const NotesPage = () => {
     const [notes, setNotes] = useState([]);
     const [noteIsNew, setNoteIsNew] = useState(false);
 
-    const [socket, setSocket] = useState(null);
-
-    const [allUsers, setAllUsers] = useState([]);
-    const [connectedUsers, setConnectedUsers] = useState([]);
-
     useEffect(() => {
         updateNotes();
     }, [popupVisible]);
-
-    const initSocket = () => {
-        const newSocket = io("http://localhost:3000");
-
-        newSocket.on("connect", () => {
-            console.log("You have connected to the server.");
-        });
-
-        newSocket.emit("join-note", noteId, username);
-        setSocket(newSocket);
-
-        //
-        newSocket.on("new-connection", (allUsers) => {
-            if (allUsers.length == 0) {
-                newSocket.emit("note-init", noteId, noteTitle, noteBody);
-            } else {
-                console.log("Not first user");
-                newSocket.emit("get-latest-note", noteId);
-            }
-
-            const array = [];
-            for (const user of allUsers) {
-                const userIcon = {
-                    name: user,
-                    icon: "/icon.png"
-                };
-                array.push(userIcon);
-            }
-            setConnectedUsers(array);
-
-            console.log("I just connected, clients are:", allUsers);
-        });
-
-        //Update current connected users when new user joins
-        newSocket.on("add-connection", (user) => {
-            setConnectedUsers((prevConnectedUsers) => {
-                const userIcon = {
-                    name: user,
-                    icon: "/icon.png"
-                }
-
-                return [...prevConnectedUsers, userIcon];
-            });
-            console.log("New client joined, here's the username:", user);
-        });
-
-        newSocket.on("lost-connection", (lostUser) => {
-            setConnectedUsers((allConnectedUsers) => {
-                return allConnectedUsers.filter(user => user.name !== lostUser);
-            });
-            console.log("Client left, here's the username:", lostUser);
-        });
-
-        newSocket.on("update-note", (noteTitle, noteBody) => {
-            if (noteTitle) {
-                setNoteTitle(noteTitle);
-            }
-            if (noteBody) {
-                setNoteBody(noteBody);
-            }
-        });
-
-        newSocket.on("update-title", (title) => {
-            setNoteTitle(title);
-        });
-    }
 
     const openNote = (note = null) => {
         if (note !== null) {
@@ -279,12 +282,11 @@ const NotesPage = () => {
             setNoteBody("");
             setNoteId(-1);
             setNoteIsNew(true);
-            alert("Code runs here")
 
             setSelectedNote({
-                noteid: noteId,
-                title: noteTitle,
-                text: noteBody
+                noteid: -1,
+                title: "Note Title",
+                text: ""
             });
         }
 
@@ -322,7 +324,6 @@ const NotesPage = () => {
                 showToast.error(updateNoteRequest.json.error);
             }
         }
-        closeNote();
     }
 
     const handleShareNote = async (username) => {
@@ -359,8 +360,8 @@ const NotesPage = () => {
         setNoteBody(newBody);
     }
 
-    const handleTitleUpdate = (event) => {
-        setNoteTitle(event.target.value);
+    const handleTitleUpdate = (noteTitle) => {
+        setNoteTitle(noteTitle);
     }
 
     const noteFunctions = {
