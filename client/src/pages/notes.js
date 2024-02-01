@@ -1,7 +1,7 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import "./styles/notes.scss"
 import Toolbar from "../components/toolbar";
-import { TextButton, RoundIconButton, IconButton } from "../components/button";
+import { TextButton, RoundIconButton } from "../components/button";
 import { marked } from "marked";
 import { useParams } from "react-router-dom";
 import { addNote, getNotes, updateNote, deleteNote, shareNote } from "../utils/DatabaseApi";
@@ -11,17 +11,11 @@ import { io } from "socket.io-client";
 import ClickAwayListener from "react-click-away-listener";
 
 const NotePopup = ({
-    noteTitle,
-    noteBody,
-    handleTitleUpdate, 
-    handleNoteUpdate, 
-    onDelete, 
-    handleShare, 
-    onSave, 
-    onClose
+    note,
+    functions
 }) => {
 
-    const [markdown, setMarkdown] = useState(noteBody);
+    const [markdown, setMarkdown] = useState(note.text);
     const [preview, setPreview] = useState("");
 
     const [previewVisible, setPreviewVisible] = useState(false);
@@ -33,18 +27,18 @@ const NotePopup = ({
     const [discardPopupVisible, setDiscardPopupVisible] = useState(false);
     const [noteChanged, setNoteChanged] = useState(false);
     const discardOptions = [
-        {text: "No! Save it", highlight: true, onClick: () => {
-            onSave();
+        {text: "No", highlight: true, onClick: () => {
+            functions.handleSave();
         }},
-        {text: "I'm Sure", highlight: false, onClick: () => {
-            onClose();
+        {text: "Yes", highlight: false, onClick: () => {
+            functions.handleClose();
         }}
     ]
 
     const inputOptions = {
         placeholder: "New User",
         onClick: (username) => {
-            if (handleShare(username)) {
+            if (functions.handleShare(username)) {
                 if (!sharedList.includes(username)) {
                     setSharedList(prevValues => [...prevValues, username]);
                 }
@@ -56,14 +50,14 @@ const NotePopup = ({
     const [menuPopupVisible, setMenuPopupVisible] = useState(false);
     const menuOptions = [
         {text: "Save", onClick: () => {
-            onSave();
+            functions.handleSave();
         }},
         {text: "Share", onClick: () => {
             setSharePopupVisible(!sharePopupVisible);
             setMenuPopupVisible(false);
         }},
         {text: "Delete", onClick: () => {
-            onDelete();
+            functions.handleDelete();
         }}
     ];
 
@@ -79,8 +73,11 @@ const NotePopup = ({
     const noteUpdate = (event) => {
         const noteBody = event.target.value;
         setMarkdown(noteBody);
-        handleNoteUpdate(noteBody);
-        setNoteChanged(true);
+        functions.handleUpdate(noteBody);
+
+        if (!noteChanged) {
+            setNoteChanged(true);
+        }
     };
 
     const showPreview = () => {
@@ -96,7 +93,7 @@ const NotePopup = ({
         if (noteChanged) {
             setDiscardPopupVisible(true);
         } else {
-            onClose();
+            functions.handleClose();
         }
     }
 
@@ -105,7 +102,7 @@ const NotePopup = ({
             <div class="header">
                 <div class="header-left">
                     <RoundIconButton icon="/x.svg" alt="close" onClick={handleNoteClose}/>
-                    <input type="text" placeholder={noteTitle} onChange={handleTitleUpdate}/>
+                    <input type="text" placeholder={note.title} onChange={functions.handleTitleUpdate}/>
                 </div>
                 <div class="header-right">
                     <TextButton text={previewBtn} onClick={showPreview}/>
@@ -162,7 +159,7 @@ const NotePopup = ({
                 (
                     <ClickAwayListener onClickAway={() => setDiscardPopupVisible(false)}>
                         <div>
-                            <ChoiceMenu options={discardOptions} textPrompt={"Are you sure you want to discard your changes?"}/>
+                            <ChoiceMenu options={discardOptions} textPrompt={"Discard your changes?"}/>
                         </div>
                     </ClickAwayListener>
                 )
@@ -185,13 +182,14 @@ const NotesPage = () => {
     const token = localStorage.getItem("authToken");
     const username = localStorage.getItem("username");
 
+    const [noteId, setNoteId] = useState(-1);
     const [noteTitle, setNoteTitle] = useState("");
     const [noteBody, setNoteBody] = useState("");
+    const [selectedNote, setSelectedNote] = useState(null);
 
     const [popupVisible, setPopupVisible] = useState(false);
     const [notes, setNotes] = useState([]);
     const [noteIsNew, setNoteIsNew] = useState(false);
-    const [noteId, setNoteId] = useState(-1);
 
     const [socket, setSocket] = useState(null);
 
@@ -212,6 +210,7 @@ const NotesPage = () => {
         newSocket.emit("join-note", noteId, username);
         setSocket(newSocket);
 
+        //
         newSocket.on("new-connection", (allUsers) => {
             if (allUsers.length == 0) {
                 newSocket.emit("note-init", noteId, noteTitle, noteBody);
@@ -233,7 +232,38 @@ const NotesPage = () => {
             console.log("I just connected, clients are:", allUsers);
         });
 
+        //Update current connected users when new user joins
+        newSocket.on("add-connection", (user) => {
+            setConnectedUsers((prevConnectedUsers) => {
+                const userIcon = {
+                    name: user,
+                    icon: "/icon.png"
+                }
 
+                return [...prevConnectedUsers, userIcon];
+            });
+            console.log("New client joined, here's the username:", user);
+        });
+
+        newSocket.on("lost-connection", (lostUser) => {
+            setConnectedUsers((allConnectedUsers) => {
+                return allConnectedUsers.filter(user => user.name !== lostUser);
+            });
+            console.log("Client left, here's the username:", lostUser);
+        });
+
+        newSocket.on("update-note", (noteTitle, noteBody) => {
+            if (noteTitle) {
+                setNoteTitle(noteTitle);
+            }
+            if (noteBody) {
+                setNoteBody(noteBody);
+            }
+        });
+
+        newSocket.on("update-title", (title) => {
+            setNoteTitle(title);
+        });
     }
 
     const openNote = (note = null) => {
@@ -242,10 +272,20 @@ const NotesPage = () => {
             setNoteBody(note.text);
             setNoteId(note.noteid);
             setNoteIsNew(false);
+
+            setSelectedNote(note);
         } else {
             setNoteTitle("Note Title");
             setNoteBody("");
+            setNoteId(-1);
             setNoteIsNew(true);
+            alert("Code runs here")
+
+            setSelectedNote({
+                noteid: noteId,
+                title: noteTitle,
+                text: noteBody
+            });
         }
 
         setPopupVisible(true);
@@ -286,6 +326,10 @@ const NotesPage = () => {
     }
 
     const handleShareNote = async (username) => {
+        if (noteId < 0) {
+            showToast.error("Note save is required before sharing");
+            return;
+        }
         const shareNoteRequest = await shareNote(userId, username, noteId, token);
 
         if (shareNoteRequest.status === 201) {
@@ -319,6 +363,14 @@ const NotesPage = () => {
         setNoteTitle(event.target.value);
     }
 
+    const noteFunctions = {
+        handleUpdate: handleNoteUpdate,
+        handleTitleUpdate: handleTitleUpdate,
+        handleClose: closeNote,
+        handleDelete: deleteUserNote,
+        handleShare: handleShareNote,
+        handleSave: saveNote
+    }
 
     return (
         <div class="background">
@@ -334,14 +386,8 @@ const NotesPage = () => {
             {
                 popupVisible &&
                 (<NotePopup 
-                    noteTitle={noteTitle}
-                    noteBody={noteBody}
-                    handleNoteUpdate={handleNoteUpdate}
-                    handleTitleUpdate={handleTitleUpdate}
-                    onClose={closeNote}
-                    onDelete={deleteUserNote}
-                    handleShare={handleShareNote}
-                    onSave={saveNote}
+                    note={selectedNote}
+                    functions={noteFunctions}
                 />)
             }
 
