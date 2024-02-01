@@ -74,9 +74,7 @@ const NotePopup = ({
 
     useEffect(() => {
         if (useSocket) {
-            alert("Attempted to connect to socket.");
-
-            const newSocket = io("http://localhost:3000");
+            const newSocket = io("http://localhost:8008");
 
             newSocket.on("connect", () => {
                 console.log("You have connected to the server.");
@@ -103,6 +101,7 @@ const NotePopup = ({
                     array.push(userIcon);
                 }
                 setConnectedUsers(array);
+                showToast.info("You have connected to note successfully.")
 
                 console.log("I just connected, clients are:", allUsers);
             });
@@ -118,6 +117,7 @@ const NotePopup = ({
                     return [...prevConnectedUsers, userIcon];
                 });
                 console.log("New client joined, here's the username:", user);
+                showToast.info(`${user} has connected.`)
             });
 
             newSocket.on("lost-connection", (lostUser) => {
@@ -140,8 +140,11 @@ const NotePopup = ({
                 setNoteTitle(title);
             });
 
-            }
-    });
+            return () => {
+                newSocket.disconnect();
+            };
+        }
+    }, []);
 
     const handleTitleUpdate = (noteTitle) => {
         setNoteTitle(noteTitle);
@@ -261,8 +264,8 @@ const Note = ({title, ...props}) => {
 
 const NotesPage = () => {
     const { userId } = useParams();
-    const token = localStorage.getItem("authToken");
-    const username = localStorage.getItem("username");
+    const token = localStorage.getItem(`authToken_${userId}`);
+    const username = localStorage.getItem(`username_${userId}`);
 
     const [noteId, setNoteId] = useState(-1);
     const [noteTitle, setNoteTitle] = useState("");
