@@ -1,22 +1,25 @@
 import React from "react";
-import { TextButton } from "./button";
+import { RoundIconButton, ProfileButton } from "./button";
 import styles from "./styles/toolbar.module.scss"
 
-const Toolbar = ({username, newNotePress}) => {
+const Toolbar = ({username, toolFunctions}) => {
 
-    const handleNewNotePress = () => {
-        newNotePress();
-    }
     return (
         <div className={styles.container}>
             <div className={styles.profilecontainer}>
-                <img src="/profile.svg" alt="profile" />
+                <ProfileButton icon={"/tree.png"} onClick={() => alert("Tree icon pressed")}/>
                 <h1>{username}</h1>
             </div>
-            <TextButton 
-                text="New Note" 
-                onClick={handleNewNotePress}
-            />
+            <div className={`${styles.toolicons}`}>
+                <RoundIconButton 
+                    icon={"/search.svg"}
+                    alt={"search"}
+                    onClick={() => toolFunctions.searchPress()}/>
+                <RoundIconButton 
+                    icon={"/add.svg"}
+                    alt={"add note"}
+                    onClick={() => toolFunctions.newNotePress()}/>
+            </div>
         </div>
     );
 }
