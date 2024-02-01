@@ -6,7 +6,7 @@ import { marked } from "marked";
 import { useParams } from "react-router-dom";
 import { addNote, getNotes, updateNote, deleteNote, shareNote } from "../utils/DatabaseApi";
 import showToast from "../components/toast";
-import { ChoiceMenu, MenuList, MenuListInput } from "../components/popup";
+import { MenuList, MenuListInput } from "../components/popup";
 import { io } from "socket.io-client";
 import ClickAwayListener from "react-click-away-listener";
 
@@ -15,6 +15,7 @@ const NotePopup = ({
     functions
 }) => {
 
+    const [noteTitle, setNoteTitle] = useState(note.title);
     const [markdown, setMarkdown] = useState(note.text);
     const [preview, setPreview] = useState("");
 
@@ -126,9 +127,9 @@ const NotePopup = ({
                 console.log("Client left, here's the username:", lostUser);
             });
 
-            newSocket.on("update-note", (noteTitle, noteBody) => {
-                if (noteTitle) {
-                    functions.handleTitleUpdate(noteTitle)
+            newSocket.on("update-note", (title, noteBody) => {
+                if (title) {
+                    setNoteTitle(title);
                 }
                 if (noteBody) {
                     handleNoteUpdate(noteBody);
@@ -136,14 +137,20 @@ const NotePopup = ({
             });
 
             newSocket.on("update-title", (title) => {
-                functions.handleTitleUpdate(title);
+                setNoteTitle(title);
             });
 
             }
     });
 
     const handleTitleUpdate = (noteTitle) => {
+        setNoteTitle(noteTitle);
         functions.handleTitleUpdate(noteTitle);
+
+        if (useSocket) {
+            socket.emit("title-update", note.noteid, noteTitle);
+        }
+
         if (!noteChanged) {
             setNoteChanged(true);
         }
@@ -154,7 +161,7 @@ const NotePopup = ({
         functions.handleUpdate(noteText);
 
         if (useSocket) {
-            socket.emit("note-update", note.noteid, note.text);
+            socket.emit("note-update", note.noteid, noteText);
         }
 
         if (!noteChanged) {
@@ -185,7 +192,8 @@ const NotePopup = ({
                     <RoundIconButton icon="/x.svg" alt="close" onClick={handleNoteClose}/>
                     <input 
                         type="text" 
-                        placeholder={note.title} 
+                        placeholder={"Note Title"} 
+                        value={noteTitle}
                         onChange={e => handleTitleUpdate(e.target.value)}/>
                 </div>
                 <div class="header-right">
