@@ -339,7 +339,7 @@ const NotesPage = () => {
 
     const handleShareNote = async (username) => {
         if (noteId < 0) {
-            showToast.error("Note save is required before sharing");
+            showToast.error("Save note before sharing");
             return;
         }
         const shareNoteRequest = await shareNote(userId, username, noteId, token);
