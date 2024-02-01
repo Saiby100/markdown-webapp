@@ -11,6 +11,7 @@ import { io } from "socket.io-client";
 import ClickAwayListener from "react-click-away-listener";
 
 const NotePopup = ({
+    username,
     note,
     functions
 }) => {
@@ -55,10 +56,8 @@ const NotePopup = ({
         }}
     ];
 
-    const username = localStorage.getItem("username");
-
     const [socket, setSocket] = useState(null);
-    const [useSocket, setUseSocket] = useState(note.noteid < -2);
+    const [useSocket, setUseSocket] = useState(note.noteid > 0);
 
     const [allUsers, setAllUsers] = useState([]);
     const [connectedUsers, setConnectedUsers] = useState([]);
@@ -88,8 +87,8 @@ const NotePopup = ({
                 if (allUsers.length == 0) {
                     newSocket.emit("note-init", note.noteid, note.title, note.text);
                 } else {
-                    console.log("Not first user");
                     newSocket.emit("get-latest-note", note.noteid);
+                    showToast.info("You have connected to note successfully.");
                 }
 
                 const array = [];
@@ -101,9 +100,6 @@ const NotePopup = ({
                     array.push(userIcon);
                 }
                 setConnectedUsers(array);
-                showToast.info("You have connected to note successfully.")
-
-                console.log("I just connected, clients are:", allUsers);
             });
 
             //Update current connected users when new user joins
@@ -117,7 +113,7 @@ const NotePopup = ({
                     return [...prevConnectedUsers, userIcon];
                 });
                 console.log("New client joined, here's the username:", user);
-                showToast.info(`${user} has connected.`)
+                showToast.info(`${user} has joined.`)
             });
 
             newSocket.on("lost-connection", (lostUser) => {
@@ -125,19 +121,23 @@ const NotePopup = ({
                     return allConnectedUsers.filter(user => user.name !== lostUser);
                 });
                 console.log("Client left, here's the username:", lostUser);
+                showToast.info(`${lostUser} has left.`)
             });
 
             newSocket.on("update-note", (title, noteBody) => {
                 if (title) {
                     setNoteTitle(title);
+                    functions.handleTitleUpdate(title);
                 }
                 if (noteBody) {
-                    handleNoteUpdate(noteBody);
+                    setMarkdown(noteBody);
+                    functions.handleUpdate(noteBody);
                 }
             });
 
             newSocket.on("update-title", (title) => {
                 setNoteTitle(title);
+                functions.handleTitleUpdate(noteTitle);
             });
 
             return () => {
@@ -182,7 +182,7 @@ const NotePopup = ({
     }
 
     const handleNoteClose = () => {
-        if (noteChanged) {
+        if (noteChanged && connectedUsers.length == 0) {
             functions.handleSave();
         }
         functions.handleClose();
@@ -398,6 +398,7 @@ const NotesPage = () => {
             {
                 popupVisible &&
                 (<NotePopup 
+                    username={username}
                     note={selectedNote}
                     functions={noteFunctions}
                 />)
