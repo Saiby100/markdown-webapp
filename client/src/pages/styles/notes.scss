@@ -101,4 +101,6 @@
     color: $text-colour-dark;
     padding-left: px-to-rem(10);
     height: 100%;
+	overflow-x: hidden;
+	overflow-y: auto;
 }
