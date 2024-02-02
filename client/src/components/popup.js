@@ -26,17 +26,21 @@ const IconListItem = ({text, icon, ...props}) => {
 }
 
 const IconMenuList = ({options}) => {
+    const listOptions = options.length? [...options] : [{text: "None", 
+        icon: "/profile.svg"}];
+
     const handleButtonClick = (option) => {
         if (!option.onClick) {
-        console.log(`No action specified for ${option.text}`);
+            console.log(`No action specified for ${option.text}`);
         } else {
-        option.onClick();
+            option.onClick();
         }
     };
 
+
     return (
         <div className={`${styles.container} popup`}>
-        {options.map((option, index) => (
+        {listOptions.map((option, index) => (
             <IconListItem
             key={index}
             text={option.text}
@@ -50,18 +54,19 @@ const IconMenuList = ({options}) => {
 }
 
 const MenuList = ({ options }) => {
+    const listOptions = options.length? [...options] : [{text: "None"}];
 
     const handleButtonClick = (option) => {
         if (!option.onClick) {
-        console.log(`No action specified for ${option.text}`);
+            console.log(`No action specified for ${option.text}`);
         } else {
-        option.onClick();
+            option.onClick();
         }
     };
 
     return (
         <div className={`${styles.container} popup`}>
-        {options.map((option, index) => (
+        {listOptions.map((option, index) => (
             <ListItem
             key={index}
             text={option.text}
