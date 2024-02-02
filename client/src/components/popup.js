@@ -7,33 +7,69 @@ const ListItem = ({text, ...props}) => {
     return (
         <button
             {...props}
-            className={`${styles.buttonitem}`}
+            className={`${styles.buttonitem} ${styles.hovereffect}`}
         >{text}
         </button>
-    )
+    );
+}
+
+const IconListItem = ({text, icon, ...props}) => {
+    return (
+        <div 
+            className={`${styles.buttonitem} ${styles.hovereffect} ${styles.iconproperties}`}
+            {...props}
+        >
+            <img src={icon} alt={"icon"} />
+            <p>{text}</p>
+        </div>
+    );
+}
+
+const IconMenuList = ({options}) => {
+    const handleButtonClick = (option) => {
+        if (!option.onClick) {
+        console.log(`No action specified for ${option.text}`);
+        } else {
+        option.onClick();
+        }
+    };
+
+    return (
+        <div className={`${styles.container} popup`}>
+        {options.map((option, index) => (
+            <IconListItem
+            key={index}
+            text={option.text}
+            icon={option.icon}
+            onClick={() => handleButtonClick(option)}
+            />
+        ))}
+        </div>
+    );
+
 }
 
 const MenuList = ({ options }) => {
 
-  const handleButtonClick = (option) => {
-    if (!option.onClick) {
-      console.log(`No action specified for ${option.text}`);
-    } else {
-      option.onClick();
-    }
-  };
+    const handleButtonClick = (option) => {
+        if (!option.onClick) {
+        console.log(`No action specified for ${option.text}`);
+        } else {
+        option.onClick();
+        }
+    };
 
-  return (
-    <div className={`${styles.container} popup`}>
-      {options.map((option, index) => (
-        <ListItem
-          key={index}
-          text={option.text}
-          onClick={() => handleButtonClick(option)}
-        />
-      ))}
-    </div>
-  );
+    return (
+        <div className={`${styles.container} popup`}>
+        {options.map((option, index) => (
+            <ListItem
+            key={index}
+            text={option.text}
+            onClick={() => handleButtonClick(option)}
+            />
+        ))}
+        </div>
+    );
 };
 
 const MenuListInput = ({options, inputField}) => {
@@ -90,4 +126,4 @@ const ChoiceMenu = ({options, textPrompt}) => {
 
 }
 
-export {MenuList, MenuListInput, ChoiceMenu};
+export {MenuList, MenuListInput, ChoiceMenu, IconMenuList};

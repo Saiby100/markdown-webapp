@@ -24,10 +24,22 @@
     padding: px-to-rem(5) px-to-rem(20);
     border-radius: px-to-rem(5);
     border: none;
+}
 
+.hovereffect {
     &:hover {
         cursor: pointer;
         background-color: $primary-colour-light;
+    }
+}
+
+.iconproperties {
+    display: flex;
+    align-items: center;
+    gap: px-to-rem(20);
+    img {
+        width: px-to-rem(50);
+        height: px-to-rem(50);
     }
 }
 
