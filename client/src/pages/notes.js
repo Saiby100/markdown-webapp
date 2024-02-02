@@ -63,8 +63,6 @@ const NotePopup = ({
     const [socket, setSocket] = useState(null);
     const [useSocket, setUseSocket] = useState(note.noteid > 0);
 
-    const [allUsers, setAllUsers] = useState([]);
-
     const updatePreview = () => {
         const preview = marked(markdown);
         setPreview(preview);
@@ -177,11 +175,16 @@ const NotePopup = ({
     }
 
     const handleNoteClose = () => {
-        const noteChanged = note.text !== markdown;
+        handleNoteSave();
+        functions.handleClose();
+    }
+
+    const handleNoteSave = () => {
+        const noteChanged = (note.text !== markdown) || 
+            (note.title !== noteTitle);
         if (noteChanged && connectedUsers.length == 0) {
             functions.handleSave();
         }
-        functions.handleClose();
     }
 
     return (
@@ -288,7 +291,7 @@ const NotesPage = () => {
     const [searchPopupVisible, setSearchPopupVisible] = useState(false);
     const [searchHistory, setSearchHistory] = useState([]);
     const searchOptions = {
-        placeholder: "Search Note",
+        placeholder: "Search Notes",
         buttonText: "Search",
         onClick: (string) => {
             handleSearch(string);
