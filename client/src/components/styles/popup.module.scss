@@ -21,7 +21,7 @@
     font-weight: 600;
     color: $text-colour-dark;
     margin: 0;
-    padding: px-to-rem(5) px-to-rem(20);
+    padding: px-to-rem(5) 0px;
     border-radius: px-to-rem(5);
     border: none;
 }
@@ -37,9 +37,10 @@
     display: flex;
     align-items: center;
     gap: px-to-rem(20);
+    padding: px-to-rem(0) px-to-rem(15);
     img {
-        width: px-to-rem(50);
-        height: px-to-rem(50);
+        width: px-to-rem(40);
+        height: px-to-rem(40);
     }
 }
 
