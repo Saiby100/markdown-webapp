@@ -26,8 +26,6 @@ const NotePopup = ({
     const [sharePopupVisible, setSharePopupVisible] = useState(false);
     const [sharedList, setSharedList] = useState([]);
 
-    const [noteChanged, setNoteChanged] = useState(false);
-
     const inputOptions = {
         placeholder: "New User",
         buttonText: "Share",
@@ -45,7 +43,6 @@ const NotePopup = ({
     const menuOptions = [
         {text: "Save", onClick: () => {
             functions.handleSave();
-            setNoteChanged(false);
             setMenuPopupVisible(false);
         }},
         {text: "Share", onClick: () => {
@@ -154,10 +151,6 @@ const NotePopup = ({
         if (useSocket) {
             socket.emit("title-update", note.noteid, noteTitle);
         }
-
-        if (!noteChanged) {
-            setNoteChanged(true);
-        }
     }
 
     const handleNoteUpdate = (noteText) => {
@@ -166,10 +159,6 @@ const NotePopup = ({
 
         if (useSocket) {
             socket.emit("note-update", note.noteid, noteText);
-        }
-
-        if (!noteChanged) {
-            setNoteChanged(true);
         }
     };
 
@@ -183,6 +172,7 @@ const NotePopup = ({
     }
 
     const handleNoteClose = () => {
+        const noteChanged = note.text !== markdown;
         if (noteChanged && connectedUsers.length == 0) {
             functions.handleSave();
         }
