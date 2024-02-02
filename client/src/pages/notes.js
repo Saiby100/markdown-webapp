@@ -6,7 +6,7 @@ import { marked } from "marked";
 import { useParams } from "react-router-dom";
 import { addNote, getNotes, updateNote, deleteNote, shareNote } from "../utils/DatabaseApi";
 import showToast from "../components/toast";
-import { MenuList, MenuListInput } from "../components/popup";
+import { IconMenuList, MenuList, MenuListInput } from "../components/popup";
 import { io } from "socket.io-client";
 import ClickAwayListener from "react-click-away-listener";
 
@@ -25,7 +25,6 @@ const NotePopup = ({
 
     const [sharePopupVisible, setSharePopupVisible] = useState(false);
     const [sharedList, setSharedList] = useState([]);
-
     const inputOptions = {
         placeholder: "New User",
         buttonText: "Share",
@@ -51,14 +50,20 @@ const NotePopup = ({
         }},
         {text: "Delete", onClick: () => {
             functions.handleDelete();
+        }},
+        {text: "View Users", onClick: () => {
+            setUsersPopupVisible(true);
+            setMenuPopupVisible(false);
         }}
     ];
+
+    const [usersPopupVisible, setUsersPopupVisible] = useState(false);
+    const [connectedUsers, setConnectedUsers] = useState([]);
 
     const [socket, setSocket] = useState(null);
     const [useSocket, setUseSocket] = useState(note.noteid > 0);
 
     const [allUsers, setAllUsers] = useState([]);
-    const [connectedUsers, setConnectedUsers] = useState([]);
 
     const updatePreview = () => {
         const preview = marked(markdown);
@@ -91,11 +96,11 @@ const NotePopup = ({
 
                 const array = [];
                 for (const user of allUsers) {
-                    const userIcon = {
-                        name: user,
-                        icon: "/icon.png"
+                    const userObj = {
+                        text: user,
+                        icon: "/profile.svg" //TODO: Get user profile image
                     };
-                    array.push(userIcon);
+                    array.push(userObj);
                 }
                 setConnectedUsers(array);
             });
@@ -103,12 +108,12 @@ const NotePopup = ({
             //Update current connected users when new user joins
             newSocket.on("add-connection", (user) => {
                 setConnectedUsers((prevConnectedUsers) => {
-                    const userIcon = {
-                        name: user,
-                        icon: "/icon.png"
+                    const userObj = {
+                        text: user,
+                        icon: "/profile.svg"
                     }
 
-                    return [...prevConnectedUsers, userIcon];
+                    return [...prevConnectedUsers, userObj];
                 });
                 console.log("New client joined, here's the username:", user);
                 showToast.info(`${user} has joined.`)
@@ -116,7 +121,7 @@ const NotePopup = ({
 
             newSocket.on("lost-connection", (lostUser) => {
                 setConnectedUsers((allConnectedUsers) => {
-                    return allConnectedUsers.filter(user => user.name !== lostUser);
+                    return allConnectedUsers.filter(user => user.text !== lostUser);
                 });
                 console.log("Client left, here's the username:", lostUser);
                 showToast.info(`${lostUser} has left.`)
@@ -241,6 +246,16 @@ const NotePopup = ({
                     <ClickAwayListener onClickAway={() => setMenuPopupVisible(false)}>
                         <div>
                             <MenuList options={menuOptions}/>
+                        </div>
+                    </ClickAwayListener>
+                )
+            }
+            {
+                usersPopupVisible &&
+                (
+                    <ClickAwayListener onClickAway={() => setUsersPopupVisible(false)}>
+                        <div>
+                            <IconMenuList options={connectedUsers}/>
                         </div>
                     </ClickAwayListener>
                 )
@@ -431,7 +446,6 @@ const NotesPage = () => {
                     </ClickAwayListener>
                 )
             }
-
         </div>
     );
 }
